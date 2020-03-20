@@ -5,28 +5,21 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/google/uuid"
+
 	"github.com/gin-gonic/gin"
 	scribble "github.com/nanobox-io/golang-scribble"
 )
 
+var db, dbErr = scribble.New("db", nil)
+
 func main() {
 	r := gin.Default()
 
-	r.GET("/ping", ping)
 	r.GET("/", index)
-	r.GET("/recipe", listRecipes)
+	r.GET("/recipe", httpGetRecipes)
 
-	db, err := scribble.New("db", nil)
-	if err != nil {
-		fmt.Println("Error", err)
-	}
-
-	recipe := Recipe{
-		Name: "Flammkuchenteig",
-	}
-	if err := db.Write("recipe", "recipe1", recipe); err != nil {
-		fmt.Println("Error", err)
-	}
+	r.POST("/recipe", httpPostRecipe)
 
 	records, err := db.ReadAll("recipe")
 	if err != nil {
@@ -45,22 +38,46 @@ func main() {
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
 
-func ping(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "pong",
-	})
-}
-
 func index(c *gin.Context) {
 	c.JSON(http.StatusAccepted, gin.H{
 		"/recipe": "list all recipes",
 	})
 }
 
-func listRecipes(c *gin.Context) {
-	c.JSON(http.StatusAccepted, gin.H{
-		"recipe-1": "Flammkuchenteig",
-		"recipe-2": "Pizzateig",
-		"recipe-3": "Gulasch",
-	})
+func httpGetRecipes(c *gin.Context) {
+	recipes, err := db.ReadAll("recipe")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+	}
+
+	c.JSON(http.StatusAccepted, gin.H{"recipes": recipes})
+}
+
+func httpPostRecipe(c *gin.Context) {
+	var recipe Recipe
+	var err error
+
+	err = c.BindJSON(&recipe)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+	}
+
+	if recipe.ID == uuid.Nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "ID missing for recipe",
+		})
+	}
+
+	err = CreateOrUpdateRecipe(recipe)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+	}
+
+	c.Redirect(http.StatusFound, "/recipe/"+recipe.ID.String())
 }
