@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	scribble "github.com/nanobox-io/golang-scribble"
 )
@@ -16,10 +17,14 @@ var db, dbErr = scribble.New("db", nil)
 func main() {
 	r := gin.Default()
 
-	r.GET("/", index)
+	r.Use(static.Serve("/", static.LocalFile("/Users/jurica.bacurin/Dev/recipeDB/ui", true)))
+
+	// r.GET("/", index)
 	r.GET("/recipe", httpGetRecipes)
 
 	r.POST("/recipe", httpPostRecipe)
+
+	r.PUT("/recipe", httpPutRecipe)
 
 	records, err := db.ReadAll("recipe")
 	if err != nil {
@@ -45,13 +50,23 @@ func index(c *gin.Context) {
 }
 
 func httpGetRecipes(c *gin.Context) {
-	recipes, err := db.ReadAll("recipe")
+	records, err := db.ReadAll("recipe")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 	}
 
+	recipes := []Recipe{}
+	for _, f := range records {
+		recipeFound := Recipe{}
+		if err := json.Unmarshal([]byte(f), &recipeFound); err != nil {
+			fmt.Println("Error", err)
+		}
+		recipes = append(recipes, recipeFound)
+	}
+
+	// jsonData := []byte(`[{"Name": "test1", "ID":"12-34"},{"Name": "test1", "ID":"12-34"}`)
 	c.JSON(http.StatusAccepted, gin.H{"recipes": recipes})
 }
 
@@ -69,6 +84,27 @@ func httpPostRecipe(c *gin.Context) {
 	if recipe.ID == uuid.Nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "ID missing for recipe",
+		})
+	}
+
+	err = CreateOrUpdateRecipe(recipe)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+	}
+
+	c.Redirect(http.StatusFound, "/recipe/"+recipe.ID.String())
+}
+
+func httpPutRecipe(c *gin.Context) {
+	var recipe Recipe
+	var err error
+
+	err = c.BindJSON(&recipe)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
 		})
 	}
 

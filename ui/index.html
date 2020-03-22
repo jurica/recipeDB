@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.1.0/mustache.min.js"></script>
+    <script src="recipedb.js"></script>
     <style type="text/css">
         body>.ui.container {
             margin-top: 3em;
@@ -17,168 +19,49 @@
     <div class="ui container" id="recipes">
         <div class="ui top attached menu">
             <div class="ui dropdown icon item" id="mainmenu">
-                <i class="wrench icon"></i>
+                <i class="bars icon"></i>
                 <div class="menu">
-                    <div class="item">
-                        <i class="dropdown icon"></i>
-                        <span class="text" id="buttonNew">New</span>
-                        <div class="menu">
-                            <div class="item">Document</div>
-                            <div class="item" id="imageButton">Image</div>
-                        </div>
+                    <div class="item" id="buttonHome">
+                        <i class="home icon" ></i>
+                        Start
                     </div>
-                    <div class="item">
-                        Open...
+                    <div class="item" id="buttonNew">
+                        <i class="plus icon"></i>
+                        Neu
                     </div>
-                    <div class="item">
-                        Save...
-                    </div>
-                    <div class="item">Edit Permissions</div>
                     <div class="divider"></div>
-                    <div class="header">
-                        Export
+                    <div class="item" id="buttonTags">
+                        <i class="tags icon"></i>
+                        Kategorien
                     </div>
-                    <div class="item">
-                        Share...
+                    <div class="divider"></div>
+                    <div class="item" id="buttonPrint">
+                        <i class="print icon"></i>
+                        Drucken
                     </div>
                 </div>
             </div>
             <div class="right menu">
                 <div class="ui right aligned category search item">
                     <div class="ui transparent icon input">
-                        <input class="prompt" type="text" placeholder="Search animals...">
+                        <input class="prompt" type="text" placeholder="Suche Rezept...">
                         <i class="search link icon"></i>
                     </div>
                     <div class="results"></div>
                 </div>
             </div>
         </div>
-        <div class="ui bottom attached segment">
-            <div id="singleRecipe">
-                <div class="ui grid" id="recipe">
-                    <div class="sixteen wide column">
-                        <h1 class="ui center aligned header">
-                            Flammkuchenteig</h1>
-                    </div>
-                    <div class="four wide column">
-                        <div class="ui image">
-                            <img
-                                src="https://www.simply-yummy.de/files/styles/tec_frontend_large/public/flammkuchenteig.jpg?itok=uC6QtpfN">
-                        </div>
-                    </div>
-                    <div class="four wide column">
-                        <!-- <div class="ui segment" id="ingredients"> -->
-                        <h2>Zutaten</h2>
-                        <div class="ui list">
-                            <div class="item">220 g Mehl</div>
-                            <div class="item">3 EL Olivenöl</div>
-                            <div class="item">1 Eigelb</div>
-                            <div class="item">1/2 TL Salz</div>
-                            <div class="item">100 ml warmes Wasser</div>
-                        </div>
-                        <!-- </div> -->
-                    </div>
-                    <div class="eight wide column">
-                        <!-- <div class="ui segment" > -->
-                        <h2>Zubereitung</h2>
-                        <div class="ui relaxed list" id="steps">
-                            <div class="item">
-                                <div class="content">
-                                    <h3 class="header">Schritt 1</h3>
-                                    <div class="description">Mehl mit 2 EL Olivenöl, Eigelb, Salz und 100 ml Wasser zu
-                                        einem
-                                        glatten Teig verkneten. </div>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="content">
-                                    <h3 class="header">Schritt 2</h3>
-                                    <div class="description">Teigkugel mit restlichem Öl bestreichen, in Folie wickeln.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="content">
-                                    <h3 class="header">Schritt 3</h3>
-                                    <div class="description">Eingewickelte Teigkugel bei Zimmertemperatur ca. 30 Minuten
-                                        ruhen
-                                        lassen.</div>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="content">
-                                    <h3 class="header">Schritt 4</h3>
-                                    <div class="description">
-                                        Und wie dünn muss der Flammkuchenteig jetzt sein? So dünn wie möglich. Also
-                                        nein, ein
-                                        Flammkuchenteig ist kein Strudelteig. Aber je dünner, desto knuspriger. Das
-                                        kriegst du
-                                        nicht hin? Doch – das geht ganz einfach! Beachte einfach diese Tipps & Tricks:
-                                        <br><br>
-                                        Der erste Schritt: Flammkuchen eine halbe Stunde bei Zimmertemperatur ruhen
-                                        lassen. Den
-                                        Ölteig kannst du vor der Ruhepause mit Öl einpinseln, damit er leichter
-                                        auszurollen ist.
-                                        <br><br>
-                                        Was sich wirklich empfiehlt, ist es, den Flammkuchenteig direkt auf dem
-                                        Backpapier
-                                        auszurollen – so sparst du dir den Balanceakt, den Teig von der Arbeitsfläche
-                                        unversehrt
-                                        auf das Backpapier zu heben.
-                                        <br><br>
-                                        Da sich Flammkuchenteig gerne immer wieder zusammenzieht, solltest du ihn
-                                        ausrollen und
-                                        ihm dann eine Ruhepause gönnen. Decke den Teig in der Zwischenzeit mit
-                                        Frischhaltefolie
-                                        ab, damit er nicht austrocknet und wiederhole den Vorgang ca. 3-4 mal.
-                                        <br><br>
-                                        Stell deinen Backofen auf Umluft und maximale Temperatur. Das Backblech sollte
-                                        im Ofen
-                                        mit aufheizen – so wird der Flammkuchenteig richtig knusprig.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- </div> -->
-                    </div>
+        <div class="ui bottom attached segment" id="content">
+                <div class="ui active inverted dimmer">
+                  <div class="ui large text loader">Loading</div>
                 </div>
-
-            </div>
-            <div id="recipeList" style="display: none;">
-                <div class="ui relaxed list" id="steps">
-                    <div class="item">
-                        <div class="content">
-                            <h3 class="header">Schritt 1</h3>
-                            <div class="description">Mehl mit 2 EL Olivenöl, Eigelb, Salz und 100 ml Wasser zu
-                                einem
-                                glatten Teig verkneten. </div>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="content">
-                            <h3 class="header">Schritt 2</h3>
-                            <div class="description">Teigkugel mit restlichem Öl bestreichen, in Folie wickeln.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="content">
-                            <h3 class="header">Schritt 3</h3>
-                            <div class="description">Eingewickelte Teigkugel bei Zimmertemperatur ca. 30 Minuten
-                                ruhen
-                                lassen.</div>
-                        </div>
-                    </div></div>div>
-            </div>
+                <br><br><br><br><br><br><br><br><br><br><br><br>
         </div>
-
-
-
     </div>
     <br>
-</body>
-
-</html>
+    <div class="ui modal" id="modalLoading">
+          <div class="ui loader"></div>
+</div>
 
 <div class="ui modal">
     <i class="close icon"></i>
@@ -206,18 +89,7 @@
         </div>
     </div>
 </div>
+</body>
 
-<script>
-    $('#mainmenu').dropdown();
+</html>
 
-    $('#imageButton').click(buttonClick);
-
-    function buttonClick() {
-        $('.ui.modal').modal('show');
-    }
-
-    $('#buttonNew').click(function(){
-        $('#singleRecipe').toggle();
-        $('#recipeList').toggle();
-    });
-</script>
