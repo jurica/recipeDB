@@ -6,15 +6,11 @@
     $('#buttonTags').click(buttonTagsClick);
     $('#buttonPrint').click(buttonPrintClick);
 
-
-    $.get("templates/recipeSimple.tpl", function(recipeTpl){
-        console.log(recipeTpl);
-        $('#content').html(recipeTpl);
-    });
+    buttonHomeClick();
 });
 
 function buttonNewClick() {
-    $('.ui.modal').modal('show');
+    $('#modalTest').modal('show');
 }
 
 function buttonHomeClick(){
@@ -35,7 +31,6 @@ function loadTemplate(name) {
     console.log("load template");
     return $.ajax({
         url: "templates/"+name+".tpl",
-        // dataType: "json"
     });
 }
 
@@ -43,7 +38,6 @@ function loadRecipes() {
     console.log("load recipes");
     return $.ajax({
         url: "recipe",
-        // dataType: "json"
     });
 }
 
