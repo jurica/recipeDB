@@ -1,0 +1,108 @@
+<form class="ui form" id="newRecipeForm">
+  <div class="field">
+    <label>Rezept</label>
+    <input type="text" name="recipe" placeholder="Rezept">
+  </div>
+  <div class="ui segment">
+    <div class="field">
+      <label>Zutaten</label>
+      <div class="fields" id="ingredient">
+        <button class="ui icon button" onclick="moveIngredientUp(this); return false;">
+          <i class="arrow up icon"></i>
+        </button>
+        <button class="ui icon button" onclick="moveIngredientDown(this); return false;">
+          <i class="arrow down icon"></i>
+        </button>
+        <div class="nine wide field">
+          <input type="text" name="ingredient['ingredient'][]" placeholder="Zutat">
+        </div>
+        <div class="two wide field">
+          <input type="text" name="ingredient['amount'][]" placeholder="Menge">
+        </div>
+        <div class="two wide field">
+          <input type="text" name="ingredient['unit'][]" placeholder="Einheit">
+        </div>
+        <button class="ui icon button" onclick="addIngredientRow(this); return false;">
+          <i class="plus icon"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui segment">
+    <div class="field">
+      <label>Schritte</label>
+      <div class="fields">
+        <div ui="field">
+          <button class="ui icon button" onclick="return false;">
+            <i class="arrow up icon"></i>
+          </button>
+          <button class="ui icon button" onclick="return false;">
+            <i class="arrow down icon"></i>
+          </button>
+        </div>
+        <div class="thirteen wide field">
+          <textarea placeholder="Beschreibung..."></textarea>
+        </div>
+        <div ui="field">
+          <button class="ui icon button" onclick="addIngredientRow(this); return false;">
+            <i class="plus icon"></i>
+          </button>
+          <button class="ui icon button" onclick="removeIngredientRow(this); return false;" style="visibility: hidden;">
+            <i class="minus icon"></i>
+          </button>
+        </div>
+      </div>
+      <div class="fields">
+        <div ui="field">
+          <button class="ui icon button" onclick="return false;">
+            <i class="arrow up icon"></i>
+          </button>
+          <button class="ui icon button" onclick="return false;">
+            <i class="arrow down icon"></i>
+          </button>
+        </div>
+        <div class="thirteen wide field">
+          <textarea placeholder="Beschreibung..."></textarea>
+        </div>
+        <div ui="field">
+          <button class="ui icon button" onclick="addIngredientRow(this); return false;">
+            <i class="plus icon"></i>
+          </button>
+          <button class="ui icon button" onclick="removeIngredientRow(this); return false;">
+            <i class="minus icon"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</form>
+<button class="ui icon button" onclick="saveRecipeClick()">
+  <i class="save icon"></i>
+  Speichern
+</button>
+
+<div class="fields" id="ingredientTpl" style="display: none;">
+  <button class="ui icon button" onclick="moveIngredientUp(this); return false;">
+    <i class="arrow up icon"></i>
+  </button>
+  <button class="ui icon button" onclick="moveIngredientDown(this); return false;">
+    <i class="arrow down icon"></i>
+  </button>
+  <div class="nine wide field">
+    <input type="text" name="ingredient['ingredient'][]" placeholder="Zutat">
+  </div>
+  <div class="two wide field">
+    <input type="text" name="ingredient['amount'][]" placeholder="Menge">
+  </div>
+  <div class="two wide field">
+    <input type="text" name="ingredient['unit'][]" placeholder="Einheit">
+  </div>
+  <button class="ui icon button" onclick="addIngredientRow(this); return false;">
+    <i class="plus icon"></i>
+  </button>
+  <button class="ui icon button" onclick="removeIngredientRow(this); return false;">
+    <i class="minus icon"></i>
+  </button>
+</div>
