@@ -1,4 +1,4 @@
- $(document).ready(function() {
+$(document).ready(function () {
     $('#mainmenu').dropdown();
 
     $('#buttonHome').click(buttonHomeClick);
@@ -20,48 +20,19 @@
     }
 });
 
-function moveIngredientUp(elem){
-    ingredient = $(elem).parent();
-    prev = $(elem).parent().prev();
-    prev.remove();
-    ingredient.after(prev);
-}
-
-function moveIngredientDown(elem){
-    ingredient = $(elem).parent();
-    next = $(elem).parent().next();
-    next.remove();
-    ingredient.before(next);
-}
-
-function removeIngredientRow(elem){
-    $(elem).parent().remove();
-}
-
-function addIngredientRow(elem){
-    tpl = $('#ingredientTpl').clone().removeAttr('id').toggle();
-    $(elem).parent().after(tpl);
-}
-
-function saveRecipeClick(){
-    console.log("test");
-    form = $('#newRecipeForm').form('get values');
-    console.log(form);
-}
-
 function buttonNewClick() {
     $('#modalLoading').modal('show');
 
-    loadTemplate("recipeForm").done(function(template){
+    loadTemplate("recipeForm").done(function (template) {
         $('#content').html(template);
         $('#modalLoading').modal('hide');
     });
 }
 
-function buttonHomeClick(){
+function buttonHomeClick() {
     $('#modalLoading').modal('show');
-    
-    $.when(loadTemplate("recipeSimple"), loadRecipes()).done(function(template, recipes){
+
+    $.when(loadTemplate("recipeSimple"), loadRecipes()).done(function (template, recipes) {
         console.log("ajax calls completed");
         console.log(template[0]);
         console.log(recipes[0]);
@@ -75,7 +46,7 @@ function buttonHomeClick(){
 function loadTemplate(name) {
     console.log("load template");
     return $.ajax({
-        url: "templates/"+name+".html",
+        url: "templates/" + name + ".html",
     });
 }
 
@@ -86,13 +57,13 @@ function loadRecipes() {
     });
 }
 
-function buttonTagsClick(){
-    $.get("templates/recipe.html", function(recipeTpl){
+function buttonTagsClick() {
+    $.get("templates/recipe.html", function (recipeTpl) {
         console.log(recipeTpl);
         $('#content').html(recipeTpl);
     });
 }
 
-function buttonPrintClick(){
+function buttonPrintClick() {
     $('#modalTest').modal('show');
 }

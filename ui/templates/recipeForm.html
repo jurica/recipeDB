@@ -1,3 +1,4 @@
+<script src="newRecipeForm.js"></script>
 <form class="ui form" id="newRecipeForm">
   <div class="field">
     <label>Rezept</label>
@@ -14,7 +15,7 @@
           <i class="arrow down icon"></i>
         </button>
         <div class="nine wide field">
-          <input type="text" name="ingredient['ingredient'][]" placeholder="Zutat">
+          <input type="text" name="ingredient['ingredient'][]" id="1" data-validate="dv_ingredient" placeholder="Zutat">
         </div>
         <div class="two wide field">
           <input type="text" name="ingredient['amount'][]" placeholder="Menge">
@@ -25,6 +26,9 @@
         <button class="ui icon button" onclick="addIngredientRow(this); return false;">
           <i class="plus icon"></i>
         </button>
+        <button class="ui icon button" onclick="removeIngredientRow(this); return false;">
+          <i class="minus icon"></i>
+        </button>
       </div>
     </div>
   </div>
@@ -34,21 +38,21 @@
       <label>Schritte</label>
       <div class="fields">
         <div ui="field">
-          <button class="ui icon button" onclick="return false;">
+          <button class="ui icon button" onclick="moveStepUp(); return false;">
             <i class="arrow up icon"></i>
           </button>
-          <button class="ui icon button" onclick="return false;">
+          <button class="ui icon button" onclick="moveStepDown(); return false;">
             <i class="arrow down icon"></i>
           </button>
         </div>
         <div class="thirteen wide field">
-          <textarea placeholder="Beschreibung..."></textarea>
+          <textarea placeholder="Beschreibung"></textarea>
         </div>
         <div ui="field">
-          <button class="ui icon button" onclick="addIngredientRow(this); return false;">
+          <button class="ui icon button" onclick="addStep(this); return false;">
             <i class="plus icon"></i>
           </button>
-          <button class="ui icon button" onclick="removeIngredientRow(this); return false;" style="visibility: hidden;">
+          <button class="ui icon button" onclick="removeStep(this); return false;">
             <i class="minus icon"></i>
           </button>
         </div>
@@ -76,12 +80,13 @@
       </div>
     </div>
   </div>
-
+  <div class="ui error message"></div> 
+  <button class="ui icon button">
+    <i class="save icon"></i>
+    Speichern
+  </button>
 </form>
-<button class="ui icon button" onclick="saveRecipeClick()">
-  <i class="save icon"></i>
-  Speichern
-</button>
+
 
 <div class="fields" id="ingredientTpl" style="display: none;">
   <button class="ui icon button" onclick="moveIngredientUp(this); return false;">
@@ -91,7 +96,7 @@
     <i class="arrow down icon"></i>
   </button>
   <div class="nine wide field">
-    <input type="text" name="ingredient['ingredient'][]" placeholder="Zutat">
+    <input type="text" name="ingredient['ingredient'][]" id="2" data-validate="dv_ingredient" placeholder="Zutat">
   </div>
   <div class="two wide field">
     <input type="text" name="ingredient['amount'][]" placeholder="Menge">
