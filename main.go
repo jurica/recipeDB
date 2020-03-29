@@ -12,7 +12,7 @@ import (
 	scribble "github.com/nanobox-io/golang-scribble"
 )
 
-var db, dbErr = scribble.New("db", nil)
+var db, dbErr = scribble.New("data", nil)
 
 func main() {
 	r := gin.Default()
@@ -87,14 +87,14 @@ func httpPostRecipe(c *gin.Context) {
 		})
 	}
 
-	err = CreateOrUpdateRecipe(recipe)
+	recipe, err = CreateOrUpdateRecipe(recipe)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 	}
 
-	c.Redirect(http.StatusFound, "/recipe/"+recipe.ID.String())
+	c.JSON(http.StatusAccepted, recipe)
 }
 
 func httpPutRecipe(c *gin.Context) {
@@ -108,12 +108,12 @@ func httpPutRecipe(c *gin.Context) {
 		})
 	}
 
-	err = CreateOrUpdateRecipe(recipe)
+	recipe, err = CreateOrUpdateRecipe(recipe)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 	}
 
-	c.Redirect(http.StatusFound, "/recipe/"+recipe.ID.String())
+	c.JSON(http.StatusAccepted, recipe)
 }

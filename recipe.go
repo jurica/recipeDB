@@ -22,15 +22,15 @@ func NewRecipe() Recipe {
 }
 
 // CreateOrUpdateRecipe persists a recipe
-func CreateOrUpdateRecipe(recipe Recipe) error {
+func CreateOrUpdateRecipe(recipe Recipe) (newRecipe Recipe, err error) {
 	if recipe.ID == uuid.Nil {
 		recipe.ID = uuid.New()
 	}
 
 	// TODO couchDB like check for changes
 	if err := db.Write("recipe", recipe.ID.String(), recipe); err != nil {
-		return err
+		return recipe, err
 	}
 
-	return nil
+	return recipe, nil
 }
