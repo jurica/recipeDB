@@ -2,82 +2,16 @@
 <form class="ui form" id="newRecipeForm">
   <div class="field">
     <label>Rezept</label>
-    <input type="text" name="recipe" placeholder="Rezept">
+    <input type="text" name="name" data-validate="name" placeholder="Rezept">
   </div>
   <div class="ui segment">
-    <div class="field">
+    <div class="field" id="ingredients">
       <label>Zutaten</label>
-      <div class="fields" id="ingredient">
-        <button class="ui icon button" onclick="moveIngredientUp(this); return false;">
-          <i class="arrow up icon"></i>
-        </button>
-        <button class="ui icon button" onclick="moveIngredientDown(this); return false;">
-          <i class="arrow down icon"></i>
-        </button>
-        <div class="nine wide field">
-          <input type="text" name="ingredient['ingredient'][]" id="1" data-validate="dv_ingredient" placeholder="Zutat">
-        </div>
-        <div class="two wide field">
-          <input type="text" name="ingredient['amount'][]" placeholder="Menge">
-        </div>
-        <div class="two wide field">
-          <input type="text" name="ingredient['unit'][]" placeholder="Einheit">
-        </div>
-        <button class="ui icon button" onclick="addIngredientRow(this); return false;">
-          <i class="plus icon"></i>
-        </button>
-        <button class="ui icon button" onclick="removeIngredientRow(this); return false;">
-          <i class="minus icon"></i>
-        </button>
-      </div>
     </div>
   </div>
-
   <div class="ui segment">
-    <div class="field">
+    <div class="field" id="steps">
       <label>Schritte</label>
-      <div class="fields">
-        <div ui="field">
-          <button class="ui icon button" onclick="moveStepUp(); return false;">
-            <i class="arrow up icon"></i>
-          </button>
-          <button class="ui icon button" onclick="moveStepDown(); return false;">
-            <i class="arrow down icon"></i>
-          </button>
-        </div>
-        <div class="thirteen wide field">
-          <textarea placeholder="Beschreibung"></textarea>
-        </div>
-        <div ui="field">
-          <button class="ui icon button" onclick="addStep(this); return false;">
-            <i class="plus icon"></i>
-          </button>
-          <button class="ui icon button" onclick="removeStep(this); return false;">
-            <i class="minus icon"></i>
-          </button>
-        </div>
-      </div>
-      <div class="fields">
-        <div ui="field">
-          <button class="ui icon button" onclick="return false;">
-            <i class="arrow up icon"></i>
-          </button>
-          <button class="ui icon button" onclick="return false;">
-            <i class="arrow down icon"></i>
-          </button>
-        </div>
-        <div class="thirteen wide field">
-          <textarea placeholder="Beschreibung..."></textarea>
-        </div>
-        <div ui="field">
-          <button class="ui icon button" onclick="addIngredientRow(this); return false;">
-            <i class="plus icon"></i>
-          </button>
-          <button class="ui icon button" onclick="removeIngredientRow(this); return false;">
-            <i class="minus icon"></i>
-          </button>
-        </div>
-      </div>
     </div>
   </div>
   <div class="ui error message"></div> 
@@ -96,18 +30,41 @@
     <i class="arrow down icon"></i>
   </button>
   <div class="nine wide field">
-    <input type="text" name="ingredient['ingredient'][]" id="2" data-validate="dv_ingredient" placeholder="Zutat">
+    <input type="text" name="ingredient[]" data-validate="ingredient" placeholder="Zutat">
   </div>
   <div class="two wide field">
-    <input type="text" name="ingredient['amount'][]" placeholder="Menge">
+    <input type="text" name="amount[]" data-validate="amount" placeholder="Menge">
   </div>
   <div class="two wide field">
-    <input type="text" name="ingredient['unit'][]" placeholder="Einheit">
+    <input type="text" name="unit[]" data-validate="unit" placeholder="Einheit">
   </div>
-  <button class="ui icon button" onclick="addIngredientRow(this); return false;">
+  <button class="ui icon button" onclick="addIngredient(this); return false;">
     <i class="plus icon"></i>
   </button>
-  <button class="ui icon button" onclick="removeIngredientRow(this); return false;">
+  <button class="ui icon button" onclick="removeIngredient(this); return false;">
     <i class="minus icon"></i>
   </button>
+</div>
+
+
+<div class="fields" id="stepTpl" style="display: none;">
+  <div ui="field">
+    <button class="ui icon button" onclick="moveStepUp(this); return false;">
+      <i class="arrow up icon"></i>
+    </button>
+    <button class="ui icon button" onclick="moveStepDown(this); return false;">
+      <i class="arrow down icon"></i>
+    </button>
+  </div>
+  <div class="thirteen wide field">
+    <textarea placeholder="Beschreibung" name="step[]" rows="3" data-validate="step"></textarea>
+  </div>
+  <div ui="field">
+    <button class="ui icon button" onclick="addStep(this); return false;">
+      <i class="plus icon"></i>
+    </button>
+    <button class="ui icon button" onclick="removeStep(this); return false;">
+      <i class="minus icon"></i>
+    </button>
+  </div>
 </div>
