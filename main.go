@@ -17,7 +17,7 @@ var db, dbErr = scribble.New("data", nil)
 func main() {
 	r := gin.Default()
 
-	r.Use(static.Serve("/", static.LocalFile("/Users/jurica.bacurin/Dev/recipeDB/ui", true)))
+	r.Use(static.Serve("/", static.LocalFile("ui", true)))
 
 	// r.GET("/", index)
 	r.GET("/recipe", httpGetRecipes)
