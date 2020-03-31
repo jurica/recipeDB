@@ -6,6 +6,7 @@ $(document).ready(function () {
         'new': buttonNewClick,
         'list': buttonHomeClick,
         'home': buttonHomeClick,
+        '': buttonHomeClick,
         'show/:recipeId': function(recipeId) {
             console.log("route matched");
             showRecipe(recipeId);
