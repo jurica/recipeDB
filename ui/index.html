@@ -7,8 +7,10 @@
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"> -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.1.0/mustache.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.8.4/semantic.min.css">
+    <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.8.4/semantic.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.8.4/semantic.min.js"></script>
+    <script src="routie.js"></script>
     <script src="recipedb.js"></script>
     <style type="text/css">
         body>.ui.container {
@@ -23,24 +25,32 @@
             <div class="ui dropdown icon item" id="mainmenu">
                 <i class="bars icon"></i>
                 <div class="menu">
-                    <div class="item" id="buttonHome">
-                        <i class="home icon"></i>
-                        Start
-                    </div>
-                    <div class="item" id="buttonNew">
-                        <i class="plus icon"></i>
-                        Neu
-                    </div>
+                    <a href="#home">
+                        <div class="item" id="buttonHome">
+                            <i class="home icon"></i>
+                            Start
+                        </div>
+                    </a>
+                    <a href="#new">
+                        <div class="item" id="buttonNew">
+                            <i class="plus icon"></i>
+                            Neu
+                        </div>
+                    </a>
                     <div class="divider"></div>
-                    <div class="item" id="buttonTags">
-                        <i class="tags icon"></i>
-                        Kategorien
-                    </div>
+                    <a href="#tags">
+                        <div class="item" id="buttonTags">
+                            <i class="tags icon"></i>
+                            Kategorien
+                        </div>
+                    </a>
                     <div class="divider"></div>
-                    <div class="item" id="buttonPrint">
-                        <i class="print icon"></i>
-                        Drucken
-                    </div>
+                    <a href="#print">
+                        <div class="item" id="buttonPrint">
+                            <i class="print icon"></i>
+                            Drucken
+                        </div>
+                    </a>
                 </div>
             </div>
             <div class="right menu">
@@ -87,4 +97,5 @@
         </div>
     </div>
 </body>
+
 </html>

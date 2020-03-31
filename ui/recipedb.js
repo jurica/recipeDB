@@ -1,24 +1,28 @@
 $(document).ready(function () {
     $('#mainmenu').dropdown();
-
-    $('#buttonHome').click(buttonHomeClick);
-    $('#buttonNew').click(buttonNewClick);
-    $('#buttonTags').click(buttonTagsClick);
-    $('#buttonPrint').click(buttonPrintClick);
-
-    // buttonHomeClick();
-    //routing for "bookmarkable" pages, see RECIPEDB-10
-    switch (window.location.hash) {
-        case "#recipe":
-            buttonTagsClick();
-            break;
-        case "#new":
-            buttonNewClick();
-            break;
-        default:
-            break;
-    }
+    
+    routie({
+        'print': buttonPrintClick,
+        'new': buttonNewClick,
+        'list': buttonHomeClick,
+        'home': buttonHomeClick,
+        'show/:recipeId': function(recipeId) {
+            console.log("route matched");
+            showRecipe(recipeId);
+        }
+    });
 });
+
+function showRecipe(recipeId){
+    $('#modalLoading').modal('show');
+
+    $.when(loadTemplate("recipe"), loadRecipe(recipeId)).done(function (template, recipe) {
+        console.log(recipe[0]);
+        output = Mustache.render(template[0], recipe[0]);
+        $('#content').html(output);
+        $('#modalLoading').modal('hide');
+    });
+}
 
 function buttonNewClick() {
     $('#modalLoading').modal('show');
@@ -33,18 +37,18 @@ function buttonHomeClick() {
     $('#modalLoading').modal('show');
 
     $.when(loadTemplate("recipeSimple"), loadRecipes()).done(function (template, recipes) {
-        console.log("ajax calls completed");
-        console.log(template[0]);
-        console.log(recipes[0]);
+        // console.log("ajax calls completed");
+        // console.log(template[0]);
+        // console.log(recipes[0]);
         output = Mustache.render(template[0], recipes[0]);
-        console.log(output);
+        // console.log(output);
         $('#content').html(output);
         $('#modalLoading').modal('hide');
     });
 }
 
 function loadTemplate(name) {
-    console.log("load template");
+    console.log("load template: "+name);
     return $.ajax({
         url: "templates/" + name + ".html",
     });
@@ -57,10 +61,10 @@ function loadRecipes() {
     });
 }
 
-function buttonTagsClick() {
-    $.get("templates/recipe.html", function (recipeTpl) {
-        console.log(recipeTpl);
-        $('#content').html(recipeTpl);
+function loadRecipe(recipeId) {
+    console.log("load recipe for id:" + recipeId);
+    return $.ajax({
+        url: "recipe/"+recipeId,
     });
 }
 
