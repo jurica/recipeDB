@@ -21,24 +21,11 @@ func main() {
 
 	// r.GET("/", index)
 	r.GET("/recipe", httpGetRecipes)
+	r.GET("/recipe/:id", httpGetRecipe)
 
 	r.POST("/recipe", httpPostRecipe)
 
 	r.PUT("/recipe", httpPutRecipe)
-
-	records, err := db.ReadAll("recipe")
-	if err != nil {
-		fmt.Println("Error", err)
-	}
-
-	recipes := []Recipe{}
-	for _, f := range records {
-		recipeFound := Recipe{}
-		if err := json.Unmarshal([]byte(f), &recipeFound); err != nil {
-			fmt.Println("Error", err)
-		}
-		recipes = append(recipes, recipeFound)
-	}
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
@@ -47,6 +34,18 @@ func index(c *gin.Context) {
 	c.JSON(http.StatusAccepted, gin.H{
 		"/recipe": "list all recipes",
 	})
+}
+
+func httpGetRecipe(c *gin.Context) {
+	recipe := Recipe{}
+	err := db.Read("recipe", c.Param("id"), &recipe)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+	}
+
+	c.JSON(http.StatusAccepted, recipe)
 }
 
 func httpGetRecipes(c *gin.Context) {
