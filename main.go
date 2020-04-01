@@ -12,7 +12,7 @@ import (
 	scribble "github.com/nanobox-io/golang-scribble"
 )
 
-var db, dbErr = scribble.New("data", nil)
+var db, dbErr = scribble.New("./data", nil)
 
 func main() {
 	r := gin.Default()
@@ -43,9 +43,9 @@ func httpGetRecipe(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
+	} else {
+		c.JSON(http.StatusOK, recipe)
 	}
-
-	c.JSON(http.StatusAccepted, recipe)
 }
 
 func httpGetRecipes(c *gin.Context) {
@@ -54,19 +54,20 @@ func httpGetRecipes(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
-	}
+	} else {
 
-	recipes := []Recipe{}
-	for _, f := range records {
-		recipeFound := Recipe{}
-		if err := json.Unmarshal([]byte(f), &recipeFound); err != nil {
-			fmt.Println("Error", err)
+		recipes := []Recipe{}
+		for _, f := range records {
+			recipeFound := Recipe{}
+			if err := json.Unmarshal([]byte(f), &recipeFound); err != nil {
+				fmt.Println("Error", err)
+			} else {
+				recipes = append(recipes, recipeFound)
+			}
 		}
-		recipes = append(recipes, recipeFound)
-	}
 
-	// jsonData := []byte(`[{"Name": "test1", "ID":"12-34"},{"Name": "test1", "ID":"12-34"}`)
-	c.JSON(http.StatusAccepted, gin.H{"recipes": recipes})
+		c.JSON(http.StatusOK, gin.H{"recipes": recipes})
+	}
 }
 
 func httpPostRecipe(c *gin.Context) {
