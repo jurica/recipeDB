@@ -37,7 +37,7 @@ function buttonNewClick() {
 function buttonHomeClick() {
     $('#modalLoading').modal('show');
 
-    $.when(loadTemplate("recipeSimple"), loadRecipes()).done(function (template, recipes) {
+    $.when(loadTemplate("recipeList"), loadRecipes()).done(function (template, recipes) {
         // console.log("ajax calls completed");
         // console.log(template[0]);
         // console.log(recipes[0]);
