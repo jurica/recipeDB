@@ -1,0 +1,128 @@
+﻿@page "/recipe/create"
+
+<h4>Neues Rezept</h4>
+<EditForm Model="@recipe">
+    <div class="form-group mb-3">
+        <InputText class="form-control" @bind-Value="recipe.Name" />
+    </div>
+    <div class="form-group mb-3">
+        <h5>Zutaten und Mengenangaben</h5>
+        @foreach (var ingredient in recipe.Ingredients)
+        {
+            <div class="form-row mb-3">
+                <div class="col-10 input-group">
+                    <InputText @bind-Value="ingredient.Name" class="form-control" />
+                    <InputText @bind-Value="ingredient.Amount" class="form-control" />
+                    <InputSelect @bind-Value="ingredient.Unit" class="form-control">
+                        <option value="">Select classification ...</option>
+                        <option value="Exploration">Exploration</option>
+                        <option value="Diplomacy">Diplomacy</option>
+                        <option value="Defense">Defense</option>
+                    </InputSelect>
+                </div>
+                <div class="col btn-group">
+                    <button class="btn btn-danger form-control-sm" disabled="@(recipe.Ingredients.Count() == 1)" @onclick="@( c => removeIngredient(ingredient))">
+                        <i class="oi oi-minus"></i>
+                    </button>
+                    <button class="btn btn-secondary form-control-sm" disabled="@(recipe.Ingredients.IndexOf(ingredient) == 0)" @onclick="@( c => moveIngredientUp(ingredient))">
+                        <i class="oi oi-caret-top"></i>
+                    </button>
+                    <button class="btn btn-secondary form-control-sm" disabled="@(recipe.Ingredients.IndexOf(ingredient) == recipe.Ingredients.Count()-1)" @onclick="@( c => moveIngredientDown(ingredient))">
+                        <i class="oi oi-caret-bottom"></i>
+                    </button>
+                    <button class="btn btn-success form-control-sm" @onclick="@( c => addIgredientAfter(ingredient))">
+                        <i class="oi oi-plus"></i>
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="form-group mb-3">
+        <h5>Schritte</h5>
+        @foreach (var step in recipe.Steps)
+        {
+            <div class="form-row mb-3">
+                <div class="col-10 input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">#@(recipe.Steps.IndexOf(step)+1)</div>
+                    </div>
+                    <InputTextArea class="form-control" @bind-Value="step.Description" />
+                </div>
+                <div class="col btn-group">
+                    <button class="btn btn-danger form-control-sm" disabled="@(recipe.Steps.Count() == 1)" @onclick="@( c => removeStep(step))">
+                        <i class="oi oi-minus"></i>
+                    </button>
+                    <button class="btn btn-secondary form-control-sm" disabled="@(recipe.Steps.IndexOf(step) == 0)" @onclick="@( c => moveStepUp(step))">
+                        <i class="oi oi-caret-top"></i>
+                    </button>
+                    <button class="btn btn-secondary form-control-sm" disabled="@(recipe.Steps.IndexOf(step) == recipe.Steps.Count()-1)" @onclick="@( c => moveStepDown(step))">
+                        <i class="oi oi-caret-bottom"></i>
+                    </button>
+                    <button class="btn btn-success form-control-sm" @onclick="@( c => addStepAfter(step))">
+                        <i class="oi oi-plus"></i>
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</EditForm>
+
+@code {
+    private RecipeModel recipe = new RecipeModel()
+    {
+        Steps = new List<StepModel> { new StepModel { } },
+        Ingredients = new List<IngredientModel> { new IngredientModel { } }
+    };
+
+    private void addStepAfter(StepModel step)
+    {
+        int index = recipe.Steps.IndexOf(step) + 1;
+        recipe.Steps.Insert(index, new StepModel());
+    }
+
+    private void removeStep(StepModel step)
+    {
+        recipe.Steps.Remove(step);
+    }
+
+    private void moveStepUp(StepModel step) {
+        // TODO add nullcheck
+        int indexToMove = recipe.Steps.IndexOf(step);
+        StepModel tmp = step;
+        recipe.Steps[indexToMove] = recipe.Steps[indexToMove - 1];
+        recipe.Steps[indexToMove - 1] = tmp;
+    }
+
+    private void moveStepDown(StepModel step) {
+        // TODO add nullcheck
+        int indexToMove = recipe.Steps.IndexOf(step);
+        StepModel tmp = step;
+        recipe.Steps[indexToMove] = recipe.Steps[indexToMove + 1];
+        recipe.Steps[indexToMove + 1] = tmp;
+    }
+
+    private void addIgredientAfter(IngredientModel igredient) {
+        int index = recipe.Ingredients.IndexOf(igredient) + 1;
+        recipe.Ingredients.Insert(index, new IngredientModel());
+    }
+
+    private void removeIngredient(IngredientModel ingredient){
+        recipe.Ingredients.Remove(ingredient);
+    }
+
+    private void moveIngredientUp(IngredientModel ingredient) {
+        // TODO add nullcheck
+        int indexToMove = recipe.Ingredients.IndexOf(ingredient);
+        IngredientModel tmp = ingredient;
+        recipe.Ingredients[indexToMove] = recipe.Ingredients[indexToMove-1];
+        recipe.Ingredients[indexToMove - 1] = tmp;
+    }
+
+    private void moveIngredientDown(IngredientModel ingredient) {
+        // TODO add nullcheck
+        int indexToMove = recipe.Ingredients.IndexOf(ingredient);
+        IngredientModel tmp = ingredient;
+        recipe.Ingredients[indexToMove] = recipe.Ingredients[indexToMove + 1];
+        recipe.Ingredients[indexToMove + 1] = tmp;
+    }
+}

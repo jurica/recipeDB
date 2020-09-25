@@ -1,0 +1,35 @@
+﻿@page "/recipe"
+@inject HttpClient Http
+
+@if (recipes == null)
+{
+    <p><em>Lade ...</em></p>
+}
+else
+{
+    <div id="recipeList">
+        <div class="ui relaxed list" id="steps">
+            @foreach (var recipe in recipes)
+            {
+                <a class="item" href="recipe/@recipe.ID">
+                    <i class="expand icon"></i>
+                    <div class="content">
+                        <h3 class="header">@recipe.Name</h3>
+                        <div class="description">@recipe.ID</div>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private RecipeModel[] recipes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        throw new Exception();
+        recipes = await Http.GetFromJsonAsync<RecipeModel[]>("http://192.168.2.221:8080/recipe");
+    }
+
+}

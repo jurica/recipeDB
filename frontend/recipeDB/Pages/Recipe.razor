@@ -1,0 +1,63 @@
+﻿@page "/recipe/{id:guid}"
+@inject HttpClient Http
+
+@if (recipe == null)
+{
+    <p><em>Lade ...</em></p>
+}
+else
+{
+    <div class="ui grid" id="recipe">
+        <div class="sixteen wide column">
+            <h1 class="ui center aligned header">@recipe.Name</h1>
+        </div>
+        <div class="four wide column">
+            <div class="ui image">
+                <img src="https://www.simply-yummy.de/files/styles/tec_frontend_large/public/flammkuchenteig.jpg?itok=uC6QtpfN">
+            </div>
+        </div>
+        <div class="four wide column">
+            <h2>Zutaten</h2>
+            <div class="ui list">
+                @foreach (var ingredient in recipe.Ingredients)
+                {
+                    <div class="item">
+                        <i class="caret right icon"></i>
+                        <div class="content">
+                            <div class="header">@ingredient.Name</div>
+                            <div class="description">@ingredient.Amount @ingredient.Unit</div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="eight wide column">
+            <h2>Zubereitung</h2>
+            <div class="ui relaxed list" id="steps">
+                @foreach (var step in recipe.Steps)
+                {
+                    <div class="item">
+                        <div class="content">
+                            <h3 class="header">Schritt @stepCount</h3>
+                            <div class="description">@step</div>
+                        </div>
+                    </div>
+                    stepCount++;
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private RecipeModel recipe;
+    private int stepCount = 1;
+
+    [Parameter]
+    public Guid id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        recipe = await Http.GetFromJsonAsync<RecipeModel>("http://192.168.2.221:8080/recipe/" + @id.ToString());
+    }
+} 
