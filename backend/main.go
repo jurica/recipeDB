@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	scribble "github.com/nanobox-io/golang-scribble"
@@ -16,6 +17,9 @@ var db, dbErr = scribble.New("./data", nil)
 
 func main() {
 	r := gin.Default()
+	r.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"*"},
+	}))
 
 	r.Use(static.Serve("/", static.LocalFile("ui", true)))
 
@@ -66,7 +70,7 @@ func httpGetRecipes(c *gin.Context) {
 			}
 		}
 
-		c.JSON(http.StatusOK, gin.H{"recipes": recipes})
+		c.JSON(http.StatusOK, recipes)
 	}
 }
 

@@ -8,8 +8,13 @@ import (
 type Recipe struct {
 	Name        string
 	Ingredients []Ingredient
-	Steps       []string
+	Steps       []Step
 	ID          uuid.UUID
+}
+
+// Step contains the description text
+type Step struct {
+	Description string
 }
 
 // NewRecipe get a new recipe with unique ID
