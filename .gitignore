@@ -4,3 +4,4 @@ __debug_bin
 bin/*
 backend/bin/arm7/recipeDB
 backend/bin/mac/recipeDB
+backend/data
