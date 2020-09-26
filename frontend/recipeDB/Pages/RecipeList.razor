@@ -7,20 +7,26 @@
 }
 else
 {
-    <div id="recipeList">
-        <div class="ui relaxed list" id="steps">
-            @foreach (var recipe in recipes)
-            {
-                <a class="item" href="recipe/@recipe.ID">
-                    <i class="expand icon"></i>
-                    <div class="content">
-                        <h3 class="header">@recipe.Name</h3>
-                        <div class="description">@recipe.ID</div>
-                    </div>
-                </a>
-            }
-        </div>
-    </div>
+    <h1>Rezepte</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">erstellt am</th>
+                <th scope="col">geändert am</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var recipe in recipes)
+        {
+            <tr>
+                <td><a class="item" href="recipe/@recipe.ID">@recipe.Name</a></td>
+                <td>tdb.</td>
+                <td>tdb.</td>
+            </tr>
+        }
+        </tbody>
+    </table>
 }
 
 @code {

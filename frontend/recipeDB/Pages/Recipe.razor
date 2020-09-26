@@ -8,8 +8,8 @@
 }
 else
 {
-    <nav class="navbar sticky-top navbar-light bg-light">
-        <span class="navbar-brand">@recipe.Name</span>
+    <nav class="navbar sticky-top navbar-light bg-light mb-3">
+        <span class="navbar-brand h1 my-0">@recipe.Name</span>
         <div class="form-inline">
             <button class="btn btn-link" @onclick="(c => NavManager.NavigateTo(recipe.editUrl()))"><i class="oi oi-pencil"></i></button>
             <button class="btn btn-link validation-message" @onclick="(c => showDeleteModal = true)"><i class="oi oi-delete"></i></button>
@@ -38,40 +38,32 @@ else
     <div class="modal-backdrop fade show"></div>
     }
 
-    <div class="ui grid" id="recipe">
-        <div class="four wide column">
-            <div class="ui image">
-                <img src="https://www.simply-yummy.de/files/styles/tec_frontend_large/public/flammkuchenteig.jpg?itok=uC6QtpfN">
-            </div>
+    <div class="container-fluid ml-10">
+        <div class="row">
+            @* <img src="https://www.simply-yummy.de/files/styles/tec_frontend_large/public/flammkuchenteig.jpg?itok=uC6QtpfN"> *@
         </div>
-        <div class="four wide column">
-            <h2>Zutaten</h2>
-            <div class="ui list">
-                @foreach (var ingredient in recipe.Ingredients)
-                {
-                    <div class="item">
-                        <i class="caret right icon"></i>
-                        <div class="content">
-                            <div class="header">@ingredient.Name</div>
-                            <div class="description">@ingredient.Amount @ingredient.Unit</div>
-                        </div>
-                    </div>
-                }
+        <div class="row">
+            <div class="col-md-3">
+                <h4>Zutaten</h4>
+                <ul class="list-group list-group-flush">
+                    @foreach (var ingredient in recipe.Ingredients)
+                    {
+                        <li class="list-group-item">@ingredient.Amount @ingredient.Unit - @ingredient.Name</li>
+                    }
+                </ul>
             </div>
-        </div>
-        <div class="eight wide column">
-            <h2>Zubereitung</h2>
-            <div class="ui relaxed list" id="steps">
-                @foreach (var step in recipe.Steps)
-                {
-                    <div class="item">
-                        <div class="content">
-                            <h3 class="header">Schritt @stepCount</h3>
-                            <div class="description" style="white-space: pre-line">@step.Description</div>
-                        </div>
-                    </div>
-                    stepCount++;
-                }
+            <div class="col-md-9">
+                <h4>Zubereitung</h4>
+                <ul class="list-group list-group-flush">
+                    @foreach (var step in recipe.Steps)
+                    {
+                        <li class="list-group-item">
+                            <h5 class="header">Schritt @stepCount</h5>
+                            @step.Description
+                        </li>
+                        stepCount++;
+                    }
+                </ul>
             </div>
         </div>
     </div>
