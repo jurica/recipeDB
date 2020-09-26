@@ -19,7 +19,7 @@ func main() {
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{"*"},
-		AllowMethods: []string{"GET", "POST", "PUT"},
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
 		AllowHeaders: []string{"Content-Type"},
 	}))
 
@@ -127,13 +127,9 @@ func httpPutRecipe(c *gin.Context) {
 }
 
 func httpDeleteRecipe(c *gin.Context) {
-	var recipe Recipe
 	var err error
 
-	err = c.BindJSON(&recipe)
-	if err != nil {
-		err = DeleteRecipe(recipe)
-	}
+	err = DeleteRecipe(c.Param("id"))
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
