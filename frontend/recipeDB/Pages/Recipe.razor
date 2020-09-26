@@ -1,5 +1,6 @@
 ﻿@page "/recipe/{id:guid}"
 @inject HttpClient Http
+@inject NavigationManager NavManager
 
 @if (recipe == null)
 {
@@ -7,10 +8,37 @@
 }
 else
 {
-    <div class="ui grid" id="recipe">
-        <div class="sixteen wide column">
-            <h1 class="ui center aligned header">@recipe.Name</h1>
+    <nav class="navbar sticky-top navbar-light bg-light">
+        <span class="navbar-brand">@recipe.Name</span>
+        <div class="form-inline">
+            <button class="btn btn-link" @onclick="(c => NavManager.NavigateTo(recipe.editUrl()))"><i class="oi oi-pencil"></i></button>
+            <button class="btn btn-link validation-message" @onclick="(c => showDeleteModal = true)"><i class="oi oi-delete"></i></button>
         </div>
+    </nav>
+    
+    @if (showDeleteModal)
+    {
+        <div class="modal fade show" style="display: block;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Löschen bestätigen</h4>
+                        <button type="button" disabled="@modalDisabled" class="close" data-dismiss="modal" @onclick="(c => showDeleteModal = false)">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Wirklich löschen? </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" disabled="@modalDisabled" class="btn btn-secondary" data-dismiss="modal" @onclick="(c => showDeleteModal = false)">Abbrechen</button>
+                        <button type="button" disabled="@modalDisabled" class="btn btn-danger" data-dismiss="modal" @onclick="deleteRecipe">Löschen</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div class="modal-backdrop fade show"></div>
+    }
+
+    <div class="ui grid" id="recipe">
         <div class="four wide column">
             <div class="ui image">
                 <img src="https://www.simply-yummy.de/files/styles/tec_frontend_large/public/flammkuchenteig.jpg?itok=uC6QtpfN">
@@ -50,11 +78,21 @@ else
 }
 
 @code {
-    private RecipeModel recipe;
-    private int stepCount = 1;
-
     [Parameter]
     public Guid id { get; set; }
+
+    private RecipeModel recipe;
+    private int stepCount = 1;
+    private bool showDeleteModal = false;
+    private bool modalDisabled = false;
+
+    private async void deleteRecipe()
+    {
+        modalDisabled = true;
+        HttpResponseMessage response = await Http.DeleteAsync("http://192.168.2.221:8080/recipe/" + recipe.ID.ToString());
+        showDeleteModal = false;
+        NavManager.NavigateTo("recipe");
+    }
 
     protected override async Task OnInitializedAsync()
     {

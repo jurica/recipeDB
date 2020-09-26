@@ -74,5 +74,10 @@ namespace recipeDB
             this.Ingredients[indexToMove] = this.Ingredients[indexToMove + 1];
             this.Ingredients[indexToMove + 1] = tmp;
         }
+
+        public string editUrl()
+        {
+            return "recipe/" + this.ID.ToString() + "/edit";
+        }
     }
 }
