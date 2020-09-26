@@ -23,3 +23,10 @@
     background-position: right calc(.375em + .5rem) center;
     background-size: calc(.75em + .375rem) calc(.75em + .375rem);
 }
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    color: red;
+}
