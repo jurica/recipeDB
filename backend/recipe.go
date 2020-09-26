@@ -39,3 +39,8 @@ func CreateOrUpdateRecipe(recipe Recipe) (newRecipe Recipe, err error) {
 
 	return recipe, nil
 }
+
+// DeleteRecipe delete a recipe
+func DeleteRecipe(recipe Recipe) (err error) {
+	return db.Delete("recipe", recipe.ID.String())
+}
