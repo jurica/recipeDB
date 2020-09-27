@@ -1,4 +1,4 @@
-﻿@page "/recipe/{id:guid}"
+﻿@page "/recipe/{id:int}"
 @inject HttpClient Http
 @inject NavigationManager NavManager
 
@@ -71,7 +71,7 @@ else
 
 @code {
     [Parameter]
-    public Guid id { get; set; }
+    public int id { get; set; }
 
     private RecipeModel recipe;
     private int stepCount = 1;

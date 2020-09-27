@@ -7,7 +7,7 @@
 {
     <p><em>Lade ...</em></p>
 } else {
-@if (recipe.ID == Guid.Empty) {
+@if (recipe.ID == 0) {
     <h4>Neues Rezept</h4>
 } else {
     <h4>Rezept bearbeiten</h4>
@@ -87,14 +87,14 @@
 
 @code {
     [Parameter]
-    public Guid id { get; set; }
+    public int id { get; set; }
 
     private RecipeModel recipe;
     private bool formDisabled = false;
 
     protected override async Task OnInitializedAsync()
     {
-        if (id == Guid.Empty)
+        if (id == 0)
         {
             recipe = new RecipeModel()
             {
@@ -111,7 +111,7 @@
         formDisabled = true;
 
         HttpResponseMessage response;
-        if (recipe.ID == Guid.Empty) {
+        if (recipe.ID == 0) {
             response = await Http.PutAsJsonAsync<RecipeModel>("http://192.168.2.221:8080/recipe", recipe);
         } else {
             response = await Http.PostAsJsonAsync<RecipeModel>("http://192.168.2.221:8080/recipe", recipe);

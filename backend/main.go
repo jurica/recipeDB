@@ -1,21 +1,34 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
-
-	"github.com/google/uuid"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	scribble "github.com/nanobox-io/golang-scribble"
+
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
-var db, dbErr = scribble.New("./data", nil)
+var dbJSON, dbErr = scribble.New("./data", nil)
+var db *gorm.DB
+var err error
 
 func main() {
+	db, err = gorm.Open(sqlite.Open("recipeDB.db"), &gorm.Config{})
+
+	if err != nil {
+		log.Panic("failed to open database")
+	}
+
+	err = db.AutoMigrate(&Recipe{}, &Ingredient{}, &Step{})
+	if err != nil {
+		log.Panic(err.Error())
+	}
+
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{"*"},
@@ -46,10 +59,11 @@ func index(c *gin.Context) {
 
 func httpGetRecipe(c *gin.Context) {
 	recipe := Recipe{}
-	err := db.Read("recipe", c.Param("id"), &recipe)
-	if err != nil {
+	result := db.Preload("Steps").Preload("Ingredients").Find(&recipe, c.Param("id"))
+
+	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
+			"error": result.Error.Error(),
 		})
 	} else {
 		c.JSON(http.StatusOK, recipe)
@@ -57,23 +71,14 @@ func httpGetRecipe(c *gin.Context) {
 }
 
 func httpGetRecipes(c *gin.Context) {
-	records, err := db.ReadAll("recipe")
-	if err != nil {
+	var recipes []Recipe
+	result := db.Find(&recipes)
+
+	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
+			"error": result.Error.Error(),
 		})
 	} else {
-
-		recipes := []Recipe{}
-		for _, f := range records {
-			recipeFound := Recipe{}
-			if err := json.Unmarshal([]byte(f), &recipeFound); err != nil {
-				fmt.Println("Error", err)
-			} else {
-				recipes = append(recipes, recipeFound)
-			}
-		}
-
 		c.JSON(http.StatusOK, recipes)
 	}
 }
@@ -89,18 +94,18 @@ func httpPostRecipe(c *gin.Context) {
 		})
 	}
 
-	if recipe.ID == uuid.Nil {
+	if recipe.ID == 0 {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "ID missing for recipe",
 		})
 	}
 
-	recipe, err = CreateOrUpdateRecipe(recipe)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-	}
+	// recipe, err = CreateOrUpdateRecipe(recipe)
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{
+	// 		"error": err.Error(),
+	// 	})
+	// }
 
 	c.JSON(http.StatusAccepted, recipe)
 }
@@ -116,12 +121,12 @@ func httpPutRecipe(c *gin.Context) {
 		})
 	}
 
-	recipe, err = CreateOrUpdateRecipe(recipe)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-	}
+	// recipe, err = CreateOrUpdateRecipe(recipe)
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{
+	// 		"error": err.Error(),
+	// 	})
+	// }
 
 	c.JSON(http.StatusAccepted, recipe)
 }
