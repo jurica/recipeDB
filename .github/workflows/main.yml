@@ -1,0 +1,26 @@
+name: build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: build backend x86-64
+        run: echo build backend x86-64
+
+      - name: build backend arm64
+        run: echo build backend arm64
+        
+      - name: build frontend
+        run: echo build frontend
+
+#      - name: upload artifacts
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: binaries
+#          path: build/Debug/ghactiontest.zip
