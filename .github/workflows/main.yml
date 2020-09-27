@@ -12,17 +12,20 @@ jobs:
 
       - name: build backend linux-arm-7
         env:
-          GOOS: linux,
-          GOARCH: arm,
+          GOOS: linux
+          GOARCH: arm
           GOARM: 7
         run: go build -o bin/linux/arm7/recipeDB
         working-directory: ${{github.workspace}}/backend
 
-      - name: build backend linux-arm64
+      - name: build backend linux-amd64
         run: go build -o bin/linux/amd64/recipeDB
         working-directory: ${{github.workspace}}/backend
 
       - name: build backend macOS
+        env:
+          GOOS: darwin
+          GOARCH: amd64
         run: go build -o bin/macOS/amd64/recipeDB
         working-directory: ${{github.workspace}}/backend
         
