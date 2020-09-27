@@ -10,17 +10,30 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: build backend x86-64
-        run: echo build backend x86-64
+      - name: build backend linux-arm-7
+        env:
+          GOOS: linux,
+          GOARCH: arm,
+          GOARM: 7
+        run: go build -o bin/linux/arm7/recipeDB
+        working-directory: ${{github.workspace}}/backend
 
-      - name: build backend arm64
-        run: echo build backend arm64
+      - name: build backend linux-arm64
+        run: go build -o bin/linux/amd64/recipeDB
+        working-directory: ${{github.workspace}}/backend
+
+      - name: build backend macOS
+        run: go build -o bin/macOS/amd64/recipeDB
+        working-directory: ${{github.workspace}}/backend
         
       - name: build frontend
-        run: echo build frontend
+        run: dotnet publish -c Release
+        working-directory: ${{github.workspace}}/frontend
 
-#      - name: upload artifacts
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: binaries
-#          path: build/Debug/ghactiontest.zip
+      - name: upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: recipeDB
+          path: |
+            ${{github.workspace}}/frontend/recipeDB/bin
+            ${{github.workspace}}/backend/bin
