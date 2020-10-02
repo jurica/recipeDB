@@ -5,19 +5,17 @@ import (
 	"net/http"
 
 	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
-	scribble "github.com/nanobox-io/golang-scribble"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
-var dbJSON, dbErr = scribble.New("./data", nil)
 var db *gorm.DB
 var err error
 
 func main() {
+	// TODO configure path to database file
 	db, err = gorm.Open(sqlite.Open("recipeDB.db"), &gorm.Config{})
 
 	if err != nil {
@@ -35,8 +33,6 @@ func main() {
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
 		AllowHeaders: []string{"Content-Type"},
 	}))
-
-	r.Use(static.Serve("/", static.LocalFile("ui", true)))
 
 	// r.GET("/", index)
 	r.GET("/recipe", httpGetRecipes)
@@ -92,6 +88,7 @@ func httpPostRecipe(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
+		return
 	}
 
 	if recipe.ID == 0 {
@@ -100,12 +97,46 @@ func httpPostRecipe(c *gin.Context) {
 		})
 	}
 
-	// recipe, err = CreateOrUpdateRecipe(recipe)
-	// if err != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{
-	// 		"error": err.Error(),
-	// 	})
-	// }
+	tx := db.Begin()
+
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if err = tx.Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	if err = tx.Delete(Ingredient{}, "recipe_id = ?", recipe.ID).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	if err = tx.Delete(Step{}, "recipe_id = ?", recipe.ID).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	if err = tx.Save(&recipe).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	tx.Commit()
 
 	c.JSON(http.StatusAccepted, recipe)
 }
@@ -121,24 +152,36 @@ func httpPutRecipe(c *gin.Context) {
 		})
 	}
 
-	// recipe, err = CreateOrUpdateRecipe(recipe)
-	// if err != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{
-	// 		"error": err.Error(),
-	// 	})
-	// }
+	if recipe.ID != 0 {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "ID given for new recipe",
+		})
+	}
+
+	result := db.Create(&recipe)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": result.Error.Error(),
+		})
+	}
 
 	c.JSON(http.StatusAccepted, recipe)
 }
 
 func httpDeleteRecipe(c *gin.Context) {
-	var err error
-
-	err = DeleteRecipe(c.Param("id"))
-
-	if err != nil {
+	recipe := Recipe{}
+	result := db.Find(&recipe, c.Param("id"))
+	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
+			"error": result.Error.Error(),
+		})
+		return
+	}
+
+	result = db.Delete(&recipe)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": result.Error.Error(),
 		})
 	}
 

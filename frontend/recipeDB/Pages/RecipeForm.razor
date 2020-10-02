@@ -1,5 +1,5 @@
 ﻿@page "/recipe/create"
-@page "/recipe/{id:guid}/edit"
+@page "/recipe/{id:int}/edit"
 @inject HttpClient Http
 @inject NavigationManager NavManager
 
@@ -29,22 +29,24 @@
                     <InputText id="ingredientAmount" @bind-Value="ingredient.Amount" class="form-control" />
                     <InputSelect id="ingredienUnit" @bind-Value="ingredient.Unit" class="form-control">
                         <option value="">Select classification ...</option>
-                        <option value="Exploration">Exploration</option>
-                        <option value="Diplomacy">Diplomacy</option>
-                        <option value="Defense">Defense</option>
+                        <option value="g">g</option>
+                        <option value="ml">ml</option>
+                        <option value="Stück">Stück</option>
+                        <option value="EL">EL</option>
+                        <option value="TL">TL</option>
                     </InputSelect>
                 </div>
                 <div class="col btn-group">
-                    <button class="btn btn-danger form-control-sm" disabled="@(recipe.Ingredients.Count() == 1)" @onclick="@( c => recipe.removeIngredient(ingredient))">
+                    <button type="button" class="btn btn-danger form-control-sm" disabled="@(recipe.Ingredients.Count() == 1)" @onclick="@( c => recipe.removeIngredient(ingredient))">
                         <i class="oi oi-minus"></i>
                     </button>
-                    <button class="btn btn-secondary form-control-sm" disabled="@(recipe.Ingredients.IndexOf(ingredient) == 0)" @onclick="@( c => recipe.moveIngredientUp(ingredient))">
+                    <button type="button" class="btn btn-secondary form-control-sm" disabled="@(recipe.Ingredients.IndexOf(ingredient) == 0)" @onclick="@( c => recipe.moveIngredientUp(ingredient))">
                         <i class="oi oi-caret-top"></i>
                     </button>
-                    <button class="btn btn-secondary form-control-sm" disabled="@(recipe.Ingredients.IndexOf(ingredient) == recipe.Ingredients.Count()-1)" @onclick="@( c => recipe.moveIngredientDown(ingredient))">
+                    <button type="button" class="btn btn-secondary form-control-sm" disabled="@(recipe.Ingredients.IndexOf(ingredient) == recipe.Ingredients.Count()-1)" @onclick="@( c => recipe.moveIngredientDown(ingredient))">
                         <i class="oi oi-caret-bottom"></i>
                     </button>
-                    <button class="btn btn-success form-control-sm" @onclick="@( c => recipe.addIgredientAfter(ingredient))">
+                    <button type="button" class="btn btn-success form-control-sm" @onclick="@( c => recipe.addIgredientAfter(ingredient))">
                         <i class="oi oi-plus"></i>
                     </button>
                 </div>
@@ -63,16 +65,16 @@
                     <InputTextArea id="step" class="form-control" @bind-Value="step.Description" />
                 </div>
                 <div class="col btn-group">
-                    <button class="btn btn-danger form-control-sm" disabled="@(recipe.Steps.Count() == 1)" @onclick="@( c => recipe.removeStep(step))">
+                    <button type="button" class="btn btn-danger form-control-sm" disabled="@(recipe.Steps.Count() == 1)" @onclick="@( c => recipe.removeStep(step))">
                         <i class="oi oi-minus"></i>
                     </button>
-                    <button class="btn btn-secondary form-control-sm" disabled="@(recipe.Steps.IndexOf(step) == 0)" @onclick="@( c => recipe.moveStepUp(step))">
+                    <button type="button" class="btn btn-secondary form-control-sm" disabled="@(recipe.Steps.IndexOf(step) == 0)" @onclick="@( c => recipe.moveStepUp(step))">
                         <i class="oi oi-caret-top"></i>
                     </button>
-                    <button class="btn btn-secondary form-control-sm" disabled="@(recipe.Steps.IndexOf(step) == recipe.Steps.Count()-1)" @onclick="@( c => recipe.moveStepDown(step))">
+                    <button type="button" class="btn btn-secondary form-control-sm" disabled="@(recipe.Steps.IndexOf(step) == recipe.Steps.Count()-1)" @onclick="@( c => recipe.moveStepDown(step))">
                         <i class="oi oi-caret-bottom"></i>
                     </button>
-                    <button class="btn btn-success form-control-sm" @onclick="@( c => recipe.addStepAfter(step))">
+                    <button type="button"class="btn btn-success form-control-sm" @onclick="@( c => recipe.addStepAfter(step))">
                         <i class="oi oi-plus"></i>
                     </button>
                 </div>
