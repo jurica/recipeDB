@@ -1,0 +1,19 @@
+server {
+	listen			443 ssl;
+	server_name		recipedb.bacurin.de;
+	ssl_certificate		/etc/letsencrypt/live/bacurin.de/fullchain.pem;
+	ssl_certificate_key	/etc/letsencrypt/live/bacurin.de/privkey.pem;
+#	ssl_protocols		TLSv1 TLSv1.1 TLSv1.2;
+	ssl_protocols		TLSv1.2;
+	ssl_ciphers		HIGH:!aNULL:!MD5;
+
+	location / {
+		root /home/pi/recipeDB/wwwroot;
+                try_files $uri $uri/ =404;
+        }
+
+	location /api {
+		rewrite /api/(.*) /$1 break;
+		proxy_pass http://localhost:8080;
+	}
+}
