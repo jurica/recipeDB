@@ -1,4 +1,4 @@
-﻿@page "/recipe/{id:guid}"
+﻿@page "/recipe/{id:int}"
 @inject HttpClient Http
 @inject NavigationManager NavManager
 
@@ -71,7 +71,7 @@ else
 
 @code {
     [Parameter]
-    public Guid id { get; set; }
+    public int id { get; set; }
 
     private RecipeModel recipe;
     private int stepCount = 1;
@@ -81,13 +81,14 @@ else
     private async void deleteRecipe()
     {
         modalDisabled = true;
-        HttpResponseMessage response = await Http.DeleteAsync("http://192.168.2.221:8080/recipe/" + recipe.ID.ToString());
+        HttpResponseMessage response = await Http.DeleteAsync(Http.BaseAddress + "recipe/" + recipe.ID.ToString());
         showDeleteModal = false;
         NavManager.NavigateTo("recipe");
     }
 
     protected override async Task OnInitializedAsync()
     {
-        recipe = await Http.GetFromJsonAsync<RecipeModel>("http://192.168.2.221:8080/recipe/" + @id.ToString());
+        // TODO error handling
+        recipe = await Http.GetFromJsonAsync<RecipeModel>(Http.BaseAddress + "recipe/" + @id.ToString());
     }
 } 

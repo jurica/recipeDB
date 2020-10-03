@@ -6,7 +6,7 @@ namespace recipeDB
 {
     public class RecipeModel
     {
-        public Guid ID { get; set; }
+        public uint ID { get; set; }
 
         [Required]
         public String Name { get; set; }

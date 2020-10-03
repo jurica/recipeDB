@@ -5,6 +5,8 @@ namespace recipeDB
 {
     public class IngredientModel
     {
+        public uint RecipeID { get; set; }
+        
         [Required]
         public string Name { get; set; }
         
