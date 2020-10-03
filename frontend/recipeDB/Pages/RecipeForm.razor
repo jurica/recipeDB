@@ -104,7 +104,7 @@
                 Ingredients = new List<IngredientModel> { new IngredientModel { } }
             };
         } else {
-            recipe = await Http.GetFromJsonAsync<RecipeModel>("http://192.168.2.221:8080/recipe/" + @id.ToString());
+            recipe = await Http.GetFromJsonAsync<RecipeModel>(Http.BaseAddress + "recipe/" + @id.ToString());
         }
     }
 
@@ -114,9 +114,9 @@
 
         HttpResponseMessage response;
         if (recipe.ID == 0) {
-            response = await Http.PutAsJsonAsync<RecipeModel>("http://192.168.2.221:8080/recipe", recipe);
+            response = await Http.PutAsJsonAsync<RecipeModel>(Http.BaseAddress + "recipe/", recipe);
         } else {
-            response = await Http.PostAsJsonAsync<RecipeModel>("http://192.168.2.221:8080/recipe", recipe);
+            response = await Http.PostAsJsonAsync<RecipeModel>(Http.BaseAddress + "recipe/", recipe);
         }
         var responseData = await response.Content.ReadFromJsonAsync<RecipeModel>();
         NavManager.NavigateTo("recipe/" + responseData.ID.ToString());

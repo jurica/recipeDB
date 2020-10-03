@@ -34,7 +34,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        recipes = await Http.GetFromJsonAsync<RecipeModel[]>("http://192.168.2.221:8080/recipe");
+        recipes = await Http.GetFromJsonAsync<RecipeModel[]>(Http.BaseAddress + "recipe/");
     }
 
 }
