@@ -13,6 +13,15 @@
             },
         },
         {
+            "label": "release frontend",
+            "type": "shell",
+            "command": "cd ${workspaceFolder}/frontend/recipeDB/ && dotnet publish -c Release",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
             "label": "build",
             "type": "shell",
             "command": "go build -o bin/mac",
