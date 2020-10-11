@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace recipeDB
+namespace recipeDB.Models
 {
-    public class RecipeModel
+    public class Recipe
     {
         public uint ID { get; set; }
 
@@ -12,65 +12,65 @@ namespace recipeDB
         public String Name { get; set; }
 
         [ValidateComplexType]
-        public List<IngredientModel> Ingredients { get; set; }
+        public List<Ingredient> Ingredients { get; set; }
 
         [ValidateComplexType]
-        public List<StepModel> Steps { get; set; }
+        public List<Step> Steps { get; set; }
 
-        public void addStepAfter(StepModel step)
+        public void addStepAfter(Step step)
         {
             int index = this.Steps.IndexOf(step) + 1;
-            this.Steps.Insert(index, new StepModel());
+            this.Steps.Insert(index, new Step());
         }
 
-        public void removeStep(StepModel step)
+        public void removeStep(Step step)
         {
             this.Steps.Remove(step);
         }
 
-        public void moveStepUp(StepModel step)
+        public void moveStepUp(Step step)
         {
             // TODO add nullcheck
             int indexToMove = this.Steps.IndexOf(step);
-            StepModel tmp = step;
+            Step tmp = step;
             this.Steps[indexToMove] = this.Steps[indexToMove - 1];
             this.Steps[indexToMove - 1] = tmp;
         }
 
-        public void moveStepDown(StepModel step)
+        public void moveStepDown(Step step)
         {
             // TODO add nullcheck
             int indexToMove = this.Steps.IndexOf(step);
-            StepModel tmp = step;
+            Step tmp = step;
             this.Steps[indexToMove] = this.Steps[indexToMove + 1];
             this.Steps[indexToMove + 1] = tmp;
         }
 
-        public void addIgredientAfter(IngredientModel igredient)
+        public void addIgredientAfter(Ingredient igredient)
         {
             int index = this.Ingredients.IndexOf(igredient) + 1;
-            this.Ingredients.Insert(index, new IngredientModel());
+            this.Ingredients.Insert(index, new Ingredient());
         }
 
-        public void removeIngredient(IngredientModel ingredient)
+        public void removeIngredient(Ingredient ingredient)
         {
             this.Ingredients.Remove(ingredient);
         }
 
-        public void moveIngredientUp(IngredientModel ingredient)
+        public void moveIngredientUp(Ingredient ingredient)
         {
             // TODO add nullcheck
             int indexToMove = this.Ingredients.IndexOf(ingredient);
-            IngredientModel tmp = ingredient;
+            Ingredient tmp = ingredient;
             this.Ingredients[indexToMove] = this.Ingredients[indexToMove - 1];
             this.Ingredients[indexToMove - 1] = tmp;
         }
 
-        public void moveIngredientDown(IngredientModel ingredient)
+        public void moveIngredientDown(Ingredient ingredient)
         {
             // TODO add nullcheck
             int indexToMove = this.Ingredients.IndexOf(ingredient);
-            IngredientModel tmp = ingredient;
+            Ingredient tmp = ingredient;
             this.Ingredients[indexToMove] = this.Ingredients[indexToMove + 1];
             this.Ingredients[indexToMove + 1] = tmp;
         }

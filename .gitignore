@@ -8,3 +8,4 @@ backend/data
 */bin/*
 backend/*.db
 backend/*.db_
+backend/backend

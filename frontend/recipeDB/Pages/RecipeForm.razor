@@ -1,7 +1,9 @@
 ﻿@page "/recipe/create"
 @page "/recipe/{id:int}/edit"
-@inject HttpClient Http
 @inject NavigationManager NavManager
+@inject IHttpService HttpService
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
 
 @if (recipe == null)
 {
@@ -91,20 +93,20 @@
     [Parameter]
     public int id { get; set; }
 
-    private RecipeModel recipe;
+    private Recipe recipe;
     private bool formDisabled = false;
 
     protected override async Task OnInitializedAsync()
     {
         if (id == 0)
         {
-            recipe = new RecipeModel()
+            recipe = new Recipe()
             {
-                Steps = new List<StepModel> { new StepModel { } },
-                Ingredients = new List<IngredientModel> { new IngredientModel { } }
+                Steps = new List<Step> { new Step { } },
+                Ingredients = new List<Ingredient> { new Ingredient { } }
             };
         } else {
-            recipe = await Http.GetFromJsonAsync<RecipeModel>(Http.BaseAddress + "recipe/" + @id.ToString());
+            recipe = await HttpService.Get<Recipe>($"recipe/{@id.ToString()}");
         }
     }
 
@@ -112,13 +114,11 @@
     {
         formDisabled = true;
 
-        HttpResponseMessage response;
         if (recipe.ID == 0) {
-            response = await Http.PutAsJsonAsync<RecipeModel>(Http.BaseAddress + "recipe/", recipe);
+            recipe = await HttpService.Put<Recipe>($"recipe", recipe);
         } else {
-            response = await Http.PostAsJsonAsync<RecipeModel>(Http.BaseAddress + "recipe/", recipe);
+            await HttpService.Post<Recipe>($"recipe", recipe);
         }
-        var responseData = await response.Content.ReadFromJsonAsync<RecipeModel>();
-        NavManager.NavigateTo("recipe/" + responseData.ID.ToString());
+        NavManager.NavigateTo($"recipe/{recipe.ID}");
     }
 }

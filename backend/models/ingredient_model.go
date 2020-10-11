@@ -1,4 +1,4 @@
-package main
+package models
 
 // Ingredient single ingredient of a recipe
 type Ingredient struct {

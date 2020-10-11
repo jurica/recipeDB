@@ -1,12 +1,9 @@
 using System;
 using System.Net.Http;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Text;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using recipeDB.Services;
 
 namespace recipeDB
 {
@@ -17,16 +14,20 @@ namespace recipeDB
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
 
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration["apiUrl"]) });
+            builder.Services
+            .AddScoped<IAuthenticationService, AuthenticationService>()
+            .AddScoped<ILocalStorageService, LocalStorageService>()
+            .AddScoped<IHttpService, HttpService>();
 
-            //builder.Services.AddOidcAuthentication(options =>
-            //{
-            //    // Configure your authentication provider options here.
-            //    // For more information, see https://aka.ms/blazor-standalone-auth
-            //    builder.Configuration.Bind("Local", options.ProviderOptions);
-            //});
+            var host = builder.Build();
 
-            await builder.Build().RunAsync();
+            var authenticationService = host.Services.GetRequiredService<IAuthenticationService>();
+            await authenticationService.Initialize();
+
+            var httpService = host.Services.GetRequiredService<IHttpService>();
+            httpService.SetBaseAddress(new Uri(builder.Configuration["apiUrl"]));
+
+            await host.RunAsync();
         }
     }
 }

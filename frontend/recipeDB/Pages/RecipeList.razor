@@ -1,5 +1,8 @@
-﻿@page "/recipe"
-@inject HttpClient Http
+﻿@page "/"
+@page "/recipe"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@inject IHttpService HttpService
 
 @if (recipes == null)
 {
@@ -30,11 +33,11 @@ else
 }
 
 @code {
-    private RecipeModel[] recipes;
+    private Recipe[] recipes;
 
     protected override async Task OnInitializedAsync()
     {
-        recipes = await Http.GetFromJsonAsync<RecipeModel[]>(Http.BaseAddress + "recipe/");
+        recipes = await HttpService.Get<Recipe[]>("recipe");
     }
 
 }

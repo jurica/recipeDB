@@ -1,4 +1,4 @@
-package main
+package models
 
 // Step contains the description text
 type Step struct {

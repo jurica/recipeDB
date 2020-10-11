@@ -1,6 +1,8 @@
 ﻿@page "/recipe/{id:int}"
-@inject HttpClient Http
 @inject NavigationManager NavManager
+@inject IHttpService HttpService
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
 
 @if (recipe == null)
 {
@@ -73,7 +75,7 @@ else
     [Parameter]
     public int id { get; set; }
 
-    private RecipeModel recipe;
+    private Recipe recipe;
     private int stepCount = 1;
     private bool showDeleteModal = false;
     private bool modalDisabled = false;
@@ -81,14 +83,14 @@ else
     private async void deleteRecipe()
     {
         modalDisabled = true;
-        HttpResponseMessage response = await Http.DeleteAsync(Http.BaseAddress + "recipe/" + recipe.ID.ToString());
+        var result = await HttpService.Delete<Recipe>($"recipe/{@id.ToString()}");
         showDeleteModal = false;
+        modalDisabled = false;
         NavManager.NavigateTo("recipe");
     }
 
     protected override async Task OnInitializedAsync()
     {
-        // TODO error handling
-        recipe = await Http.GetFromJsonAsync<RecipeModel>(Http.BaseAddress + "recipe/" + @id.ToString());
+        recipe = await HttpService.Get<Recipe>($"recipe/{@id.ToString()}");
     }
 } 

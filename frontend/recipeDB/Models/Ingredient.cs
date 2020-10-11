@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace recipeDB
+namespace recipeDB.Models
 {
-    public class IngredientModel
+    public class Ingredient
     {
         public uint RecipeID { get; set; }
         

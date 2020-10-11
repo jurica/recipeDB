@@ -1,9 +1,9 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace recipeDB
+namespace recipeDB.Models
 {
-    public class StepModel
+    public class Step
     {
         public uint RecipeID { get; set; }
         
