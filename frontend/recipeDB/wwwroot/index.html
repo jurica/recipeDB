@@ -6,9 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>recipeDB</title>
     <base href="/" />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
     <link href="manifest.json" rel="manifest" />
+    <link href="service-worker.js" rel="script" />
     <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
 </head>
 
@@ -22,7 +23,7 @@
     </div>
     <!-- <script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js"></script> -->
     <script src="_framework/blazor.webassembly.js"></script>
-    <!-- <script>navigator.serviceWorker.register('service-worker.js');</script> -->
+    <script>navigator.serviceWorker.register('service-worker.js');</script>
 </body>
 
 </html>
