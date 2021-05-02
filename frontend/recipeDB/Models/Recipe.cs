@@ -17,6 +17,8 @@ namespace recipeDB.Models
         [ValidateComplexType]
         public List<Step> Steps { get; set; }
 
+        public double scaleFactor = 1.0;
+
         public void addStepAfter(Step step)
         {
             int index = this.Steps.IndexOf(step) + 1;

@@ -48,15 +48,35 @@ else
             <div class="col-md-3">
                 <h4>Zutaten</h4>
                 <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                    <EditForm Model="@recipe" OnValidSubmit="@HandleValidSubmit">
+                        <InputNumber id="factor" @bind-Value="recipe.scaleFactor" class="form-control" />
+                    </EditForm>
+                    </li>
                     @foreach (var ingredient in recipe.Ingredients)
                     {
-                        <li class="list-group-item">@ingredient.Amount @ingredient.Unit - @ingredient.Name</li>
+                        <li class="list-group-item">
+                            @{
+                                double amount = 0;
+                                string amountString;
+                                if (Double.TryParse(ingredient.Amount, out amount)) {
+                                    amount = amount * recipe.scaleFactor;
+                                    amountString = $"{amount} {ingredient.Unit}";
+                                } else {
+                                    amountString = $"{ingredient.Amount} {ingredient.Unit}";
+                                }
+                            }
+                            @amountString - @ingredient.Name
+                        </li>
                     }
                 </ul>
             </div>
             <div class="col-md-9">
                 <h4>Zubereitung</h4>
                 <ul class="list-group list-group-flush">
+                    @{
+                        var stepCount = 1;
+                    }
                     @foreach (var step in recipe.Steps)
                     {
                         <li class="list-group-item">
@@ -76,7 +96,6 @@ else
     public int id { get; set; }
 
     private Recipe recipe;
-    private int stepCount = 1;
     private bool showDeleteModal = false;
     private bool modalDisabled = false;
 
@@ -92,5 +111,10 @@ else
     protected override async Task OnInitializedAsync()
     {
         recipe = await HttpService.Get<Recipe>($"recipe/{@id.ToString()}");
+    }
+
+    private async void HandleValidSubmit()
+    {
+
     }
 } 

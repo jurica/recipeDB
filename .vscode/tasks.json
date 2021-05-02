@@ -6,11 +6,12 @@
         {
             "label": "run frontend",
             "type": "shell",
-            "command": "cd ${workspaceFolder}/frontend/recipeDB/ && dotnet run",
+            "command": "cd ${workspaceFolder}/frontend/recipeDB/ && dotnet watch run",
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
+            "problemMatcher": []
         },
         {
             "label": "release frontend",
