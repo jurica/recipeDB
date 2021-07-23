@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 
+	"bacurin.de/recipeDB/backend/dtos"
 	"bacurin.de/recipeDB/backend/models"
 	"github.com/gin-gonic/gin"
 )
@@ -36,15 +38,31 @@ func (rc *recipeControllerStruct) Get(c *gin.Context) {
 }
 
 func (rc *recipeControllerStruct) GetAll(c *gin.Context) {
-	var recipes []models.Recipe
-	result := models.Model.DB().Find(&recipes)
+	offset, err := strconv.Atoi(c.DefaultQuery("offset", "0"))
+	if err != nil || offset < 0 {
+		offset = 0
+	}
 
-	if result.Error != nil {
+	limit, err := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	if err != nil || limit < 1 || limit > 50 {
+		limit = 5
+	}
+
+	// var recipes []models.Recipe
+	data := dtos.RecipeList{}
+	qryResult := models.Model.DB().Offset(offset).Limit(limit).Order(c.DefaultQuery("order", "id asc")).Find(&data.Recipes)
+
+	if qryResult.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": result.Error.Error(),
+			"error": qryResult.Error.Error(),
 		})
 	} else {
-		c.JSON(http.StatusOK, recipes)
+		models.Model.DB().Model(&models.Recipe{}).Count(&data.RecipeCount)
+		data.Offset = int64(offset)
+		data.Limit = int64(limit)
+		data.CurrentPage = (data.Offset / data.Limit) + 1
+		data.PageCount = (data.RecipeCount / data.Limit) + 1
+		c.JSON(http.StatusOK, data)
 	}
 }
 

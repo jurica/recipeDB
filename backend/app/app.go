@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"bacurin.de/recipeDB/backend/middlewares"
 	"bacurin.de/recipeDB/backend/models"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -27,6 +28,11 @@ func Start() {
 
 		fmt.Println("Salted Hash: ", string(hash))
 		os.Exit(0)
+	}
+
+	if len == 2 && os.Args[1] == "noAuth" {
+		fmt.Println("Turning authentication off")
+		middlewares.NoAuth = true
 	}
 
 	_, err := models.Model.Initialize()

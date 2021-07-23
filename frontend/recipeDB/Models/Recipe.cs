@@ -19,6 +19,10 @@ namespace recipeDB.Models
 
         public double scaleFactor = 1.0;
 
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime UpdatedAt { get; set; }
+
         public void addStepAfter(Step step)
         {
             int index = this.Steps.IndexOf(step) + 1;

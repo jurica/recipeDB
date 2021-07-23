@@ -1,43 +1,147 @@
 ﻿@page "/"
-@page "/recipe"
+@page "/recipelist"
 @using Microsoft.AspNetCore.Authorization;
+@using System.Collections.Specialized;
 @attribute [Authorize]
 @inject IHttpService HttpService
+@inject NavigationManager NavManager
 
-@if (recipes == null)
+@if (recipeList == null)
 {
     <p><em>Lade ...</em></p>
 }
 else
 {
-    <h1>Rezepte</h1>
+<h2>Rezepte (@displayedRecipesCount / @recipeList.RecipeCount)</h2>
     <table class="table">
         <thead>
             <tr>
-                <th scope="col">Name</th>
-                <th scope="col">erstellt am</th>
-                <th scope="col">geändert am</th>
+                <th scope="col"><button class="btn btn-link" @onclick="OrderByName">Name</button></th>
+                <th scope="col" width="25%"><button class="btn btn-link" @onclick="OrderByCreatedAt">erstellt am</button></th>
+                <th scope="col" width="25%"><button class="btn btn-link" @onclick="OrderByUpdatedAt">geändert am</button></th>
             </tr>
         </thead>
         <tbody>
-        @foreach (var recipe in recipes)
-        {
-            <tr>
-                <td><a class="item" href="recipe/@recipe.ID">@recipe.Name</a></td>
-                <td>tdb.</td>
-                <td>tdb.</td>
-            </tr>
-        }
+            @foreach (var recipe in recipeList.Recipes)
+            {
+                <tr>
+                    <td><a class="item" href="recipe/@recipe.ID">@recipe.Name</a></td>
+                    <td>@recipe.CreatedAt</td>
+                    <td>@recipe.UpdatedAt</td>
+                </tr>
+            }
         </tbody>
+        <tfoot>
+            <tr>
+                <td align="center" colspan="3">
+                    <div class="btn-group">
+                        <button class="btn btn-outline-primary" @onclick="PreviousPage"><i class="oi oi-chevron-left"></i></button>
+                        <button class="btn btn-outline-primary" disabled>@recipeList.CurrentPage / @recipeList.PageCount</button>
+                        <button class="btn btn-outline-primary" @onclick="NextPage"><i class="oi oi-chevron-right"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </tfoot>
     </table>
 }
 
 @code {
-    private Recipe[] recipes;
+    private recipeDB.Models.RecipeList recipeList;
+    private Dictionary<string, Microsoft.Extensions.Primitives.StringValues> query;
+    private NameValueCollection qry;
+    private int displayedRecipesCount;
 
     protected override async Task OnInitializedAsync()
     {
-        recipes = await HttpService.Get<Recipe[]>("recipe");
+        NavManager.LocationChanged += HandleLocationChanged;
+
+        await updateData();
+    }
+
+    private async Task updateData()
+    {
+        qry = NavManager.QueryString();
+        recipeList = await HttpService.Get<recipeDB.Models.RecipeList>("recipelist?" + NavManager.QueryString());
+        displayedRecipesCount = recipeList.Recipes.Count() < recipeList.Limit ? recipeList.Recipes.Count() : recipeList.Limit;
+
+        StateHasChanged();
+    }
+
+    private void NextPage()
+    {
+        qry = NavManager.QueryString();
+        var newOffset = recipeList.Offset + recipeList.Limit;
+        if (newOffset / recipeList.Limit < recipeList.PageCount)
+        {
+            qry["offset"] = newOffset.ToString();
+            NavManager.NavigateTo(NavManager.BaseUri + "?" + qry);
+        }
+    }
+
+    private void PreviousPage()
+    {
+        qry = NavManager.QueryString();
+        var newOffset = recipeList.Offset - recipeList.Limit;
+        if (recipeList.Offset > 0)
+        {
+            qry["offset"] = newOffset.ToString();
+            NavManager.NavigateTo(NavManager.BaseUri + "?" + qry);
+        }
+    }
+
+    private void OrderByCreatedAt()
+    {
+        qry = NavManager.QueryString();
+        if (qry.AllKeys.Contains("order") && qry["order"].Contains("asc"))
+        {
+            qry["order"] = "created_at desc";
+        }
+        else
+        {
+            qry["order"] = "created_at asc";
+        }
+
+        NavManager.NavigateTo(NavManager.BaseUri + "?" + qry);
+    }
+
+    private void OrderByUpdatedAt()
+    {
+        qry = NavManager.QueryString();
+        if (qry.AllKeys.Contains("order") && qry["order"].Contains("asc"))
+        {
+            qry["order"] = "updated_at desc";
+        }
+        else
+        {
+            qry["order"] = "updated_at asc";
+        }
+
+        NavManager.NavigateTo(NavManager.BaseUri + "?" + qry);
+    }
+
+    private void OrderByName()
+    {
+        qry = NavManager.QueryString();
+        if (qry.AllKeys.Contains("order") && qry["order"].Contains("asc"))
+        {
+            qry["order"] = "name desc";
+        }
+        else
+        {
+            qry["order"] = "name asc";
+        }
+
+        NavManager.NavigateTo(NavManager.BaseUri + "?" + qry);
+    }
+
+    async void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        await updateData();
+    }
+
+    public void Dispose()
+    {
+        NavManager.LocationChanged -= HandleLocationChanged;
     }
 
 }

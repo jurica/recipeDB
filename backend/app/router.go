@@ -16,7 +16,7 @@ func route() {
 		AllowHeaders: []string{"Content-Type", "Authorization"},
 	}))
 
-	r.GET("/recipe", middlewares.TokenAuthMiddleware(), controllers.Recipe.GetAll)
+	r.GET("/recipelist", middlewares.TokenAuthMiddleware(), controllers.Recipe.GetAll)
 	r.GET("/recipe/:id", middlewares.TokenAuthMiddleware(), controllers.Recipe.Get)
 
 	r.POST("/recipe", middlewares.TokenAuthMiddleware(), controllers.Recipe.Update)
