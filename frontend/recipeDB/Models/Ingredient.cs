@@ -15,5 +15,5 @@ namespace recipeDB.Models
         
         [Required]
         public string Unit { get; set; }
-}
+    }
 }
