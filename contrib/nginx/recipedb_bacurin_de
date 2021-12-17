@@ -1,5 +1,6 @@
 server {
 	listen			443 ssl;
+	listen			[::]:443 ssl;
 	server_name		recipedb.bacurin.de;
 	ssl_certificate		/etc/letsencrypt/live/bacurin.de/fullchain.pem;
 	ssl_certificate_key	/etc/letsencrypt/live/bacurin.de/privkey.pem;
