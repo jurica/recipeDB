@@ -10,23 +10,23 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: build backend linux-arm64
-        env:
-          GOOS: linux
-          GOARCH: arm64
-        run: /usr/local/go/bin/go build -o bin/linux/arm64/recipeDB
-        working-directory: ${{github.workspace}}/backend
+#      - name: build backend linux-arm64
+#        env:
+#          GOOS: linux
+#          GOARCH: arm64
+#        run: /usr/local/go/bin/go build -o bin/linux/arm64/recipeDB
+#        working-directory: ${{github.workspace}}/backend
 
 #      - name: build backend linux-amd64
 #        run: go build -o bin/linux/amd64/recipeDB
 #        working-directory: ${{github.workspace}}/backend
 
-#      - name: build backend macOS
-#        env:
-#          GOOS: darwin
-#          GOARCH: amd64
-#        run: go build -o bin/macOS/amd64/recipeDB
-#        working-directory: ${{github.workspace}}/backend
+      - name: build backend macOS
+        env:
+          GOOS: darwin
+          GOARCH: amd64
+        run: go build -o bin/macOS/amd64/recipeDB
+        working-directory: ${{github.workspace}}/backend
         
       - name: build frontend
         run: dotnet publish -c Release

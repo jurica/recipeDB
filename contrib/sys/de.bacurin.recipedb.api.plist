@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>de.bacurin.recipedb.api</string>
+    <key>ServiceDescription</key>
+    <string>recipeDB API</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Volumes/RAID5/www/recipeDB/recipeDB</string>
+    </array>
+    <key>RunAtLoad</key>
+    <false/>
+    <key>StandardErrorPath</key>
+    <string>/Volumes/RAID5/www/recipeDB/log/api.log</string>
+    <key>StandardOutPath</key>
+    <string>/Volumes/RAID5/www/recipeDB/log/api.log</string>
+    <key>WorkingDirectory</key>
+    <string>/Volumes/RAID5/www/recipeDB</string>
+</dict>
+</plist>
