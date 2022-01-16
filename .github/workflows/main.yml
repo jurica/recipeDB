@@ -24,8 +24,8 @@ jobs:
       - name: build backend macOS
         env:
           GOOS: darwin
-          GOARCH: amd64
-        run: go build -o bin/macOS/amd64/recipeDB
+          GOARCH: arm64
+        run: go build -o bin/macOS/arm64/recipeDB
         working-directory: ${{github.workspace}}/backend
         
       - name: build frontend
