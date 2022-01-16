@@ -7,6 +7,7 @@ import (
 	"bacurin.de/recipeDB/backend/dtos"
 	"bacurin.de/recipeDB/backend/models"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type recipeControllerInterface interface {
@@ -48,16 +49,27 @@ func (rc *recipeControllerStruct) GetAll(c *gin.Context) {
 		limit = 5
 	}
 
+	searchQuery := c.Query("searchQuery")
+
 	// var recipes []models.Recipe
 	data := dtos.RecipeList{}
-	qryResult := models.Model.DB().Offset(offset).Limit(limit).Order(c.DefaultQuery("order", "id asc")).Find(&data.Recipes)
+
+	var qryResult *gorm.DB
+	if searchQuery != "" {
+		searchQuery = "%" + searchQuery + "%"
+		qryResult = models.Model.DB().Offset(offset).Limit(limit).Order(c.DefaultQuery("order", "id asc")).Where("name LIKE ?", searchQuery).Find(&data.Recipes)
+
+		models.Model.DB().Model(&models.Recipe{}).Where("name LIKE ?", searchQuery).Count(&data.RecipeCount)
+	} else {
+		qryResult = models.Model.DB().Offset(offset).Limit(limit).Order(c.DefaultQuery("order", "id asc")).Find(&data.Recipes)
+		models.Model.DB().Model(&models.Recipe{}).Count(&data.RecipeCount)
+	}
 
 	if qryResult.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": qryResult.Error.Error(),
 		})
 	} else {
-		models.Model.DB().Model(&models.Recipe{}).Count(&data.RecipeCount)
 		data.Offset = int64(offset)
 		data.Limit = int64(limit)
 		data.CurrentPage = (data.Offset / data.Limit) + 1

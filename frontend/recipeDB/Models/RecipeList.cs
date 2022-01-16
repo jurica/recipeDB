@@ -17,5 +17,7 @@ namespace recipeDB.Models
         public int CurrentPage { get; set; }
 
         public Recipe[] Recipes { get; set; }
+
+        public String SearchQuery { get; set; }
     }
 }

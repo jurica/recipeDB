@@ -12,13 +12,26 @@
 }
 else
 {
-<h2>Rezepte (@displayedRecipesCount / @recipeList.RecipeCount)</h2>
+    <h2>Rezepte (@displayedRecipesCount / @recipeList.RecipeCount)</h2>
+    <EditForm Model="@recipeList" OnValidSubmit="@DoSearch">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <button class="btn btn-outline-primary" type="button" id="search" @onclick="DoSearch"><i class="oi oi-magnifying-glass"></i></button>
+            </div>
+            <InputText id="searchQuery" @bind-Value="recipeList.SearchQuery" class="form-control" placeholder="Suche..." />
+            <div class="input-group-append">
+                <button class="btn btn-outline-danger" type="button" id="clearSearch" @onclick="ClearSearch"><i class="oi oi-delete"></i></button>
+            </div>
+        </div>
+    </EditForm>
     <table class="table">
         <thead>
             <tr>
                 <th scope="col"><button class="btn btn-link" @onclick="OrderByName">Name</button></th>
-                <th scope="col" width="25%"><button class="btn btn-link" @onclick="OrderByCreatedAt">erstellt am</button></th>
-                <th scope="col" width="25%"><button class="btn btn-link" @onclick="OrderByUpdatedAt">geändert am</button></th>
+                <th scope="col" width="25%"><button class="btn btn-link" @onclick="OrderByCreatedAt">erstellt am</button>
+                </th>
+                <th scope="col" width="25%"><button class="btn btn-link" @onclick="OrderByUpdatedAt">geändert am</button>
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -35,9 +48,12 @@ else
             <tr>
                 <td align="center" colspan="3">
                     <div class="btn-group">
-                        <button class="btn btn-outline-primary" @onclick="PreviousPage"><i class="oi oi-chevron-left"></i></button>
-                        <button class="btn btn-outline-primary" disabled>@recipeList.CurrentPage / @recipeList.PageCount</button>
-                        <button class="btn btn-outline-primary" @onclick="NextPage"><i class="oi oi-chevron-right"></i></button>
+                        <button class="btn btn-outline-primary" @onclick="PreviousPage"><i
+                            class="oi oi-chevron-left"></i></button>
+                        <button class="btn btn-outline-primary" disabled>@recipeList.CurrentPage /
+                            @recipeList.PageCount</button>
+                        <button class="btn btn-outline-primary" @onclick="NextPage"><i
+                            class="oi oi-chevron-right"></i></button>
                     </div>
                 </td>
             </tr>
@@ -61,10 +77,25 @@ else
     private async Task updateData()
     {
         qry = NavManager.QueryString();
-        recipeList = await HttpService.Get<recipeDB.Models.RecipeList>("recipelist?" + NavManager.QueryString());
+        recipeList = await HttpService.Get<recipeDB.Models.RecipeList>("recipelist?" + qry);
         displayedRecipesCount = recipeList.Recipes.Count() < recipeList.Limit ? recipeList.Recipes.Count() : recipeList.Limit;
+        recipeList.SearchQuery = qry["searchQuery"];
 
         StateHasChanged();
+    }
+
+    private void DoSearch()
+    {
+        qry = NavManager.QueryString();
+        qry["searchQuery"] = recipeList.SearchQuery;
+        NavManager.NavigateTo(NavManager.BaseUri + "?" + qry);
+    }
+
+    private void ClearSearch()
+    {
+        recipeList.SearchQuery = "";
+        qry["searchQuery"] = recipeList.SearchQuery;
+        NavManager.NavigateTo(NavManager.BaseUri + "?" + qry);
     }
 
     private void NextPage()
