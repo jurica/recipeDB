@@ -1,14 +1,14 @@
 #found online: https://fabianlee.org/2017/05/21/golang-running-a-go-binary-as-a-systemd-service-on-ubuntu-16-04/
 
 #ln -s /home/recipedb/src/recipeDB/contrib/sys/recipeDB.service /lib/systemd/system/
-#sudo chmod 755 /lib/systemd/system/sleepservice.service
-#sudo systemctl enable sleepservice.service
-#sudo systemctl start sleepservice
+#sudo chmod 755 /lib/systemd/system/recipeDB.service
+#sudo systemctl enable recipeDB.service
+#sudo systemctl start recipeDB
 
 
 [Unit]
 Description=recipeDB REST service
-ConditionPathExists=/home/recipedb/recipeDB
+ConditionPathExists=/zfsPoolSSD/www/recipeDB
 After=network.target
 
 [Service]
@@ -21,8 +21,8 @@ Restart=on-failure
 RestartSec=10
 startLimitIntervalSec=60
 
-WorkingDirectory=/home/recipedb/recipeDB
-ExecStart=/home/recipedb/recipeDB/recipeDB
+WorkingDirectory=/zfsPoolSSD/www/recipeDB
+ExecStart=/zfsPoolSSD/www/recipeDB/recipeDB
 
 # make sure log directory exists and owned by syslog
 PermissionsStartOnly=true
