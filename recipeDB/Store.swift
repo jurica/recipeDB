@@ -6,13 +6,20 @@
 //
 
 import SQLite
+import Foundation
 
 struct Store {
     var db: Connection? = nil
     
     init() {
         do {
-            db = try Connection("recipeDB.db")
+//            print("ubiquityIdentityToken: %@", FileManager.default.ubiquityIdentityToken as Any)
+            if let path = FileManager.default.url(forUbiquityContainerIdentifier: "iCloud.de.bacurin.recipeDB") {
+                let documents = path.appendingPathComponent("Documents")
+                let dbFile = documents.appending(path: "recipeDB.db")
+//                print(FileManager.default.isUbiquitousItem(at: dbFile))
+                db = try Connection(dbFile.absoluteString)
+            }
         } catch {
             print(error)
         }
@@ -69,5 +76,20 @@ struct Store {
         }
         
         return steps
+    }
+    
+    func save(recipe: Recipe) {
+        if let db = db {
+//            try db.run(users.insert(or: .replace, email <- "alice@mac.com", name <- "Alice B."))
+            do {
+                try db.transaction {
+                    try db.run(Recipe.sqlTable.insert(or: .replace,
+                                                      Recipe.sqlColumnId <- recipe.id,
+                                                      Recipe.sqlColumnName <- recipe.name))
+                }
+            } catch {
+                print(error)
+            }
+        }
     }
 }

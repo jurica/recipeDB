@@ -13,27 +13,22 @@ class Recipe : ObservableObject, Hashable {
         return lhs.id == rhs.id
     }
     
-    static var lastId: Int = 0
-    let id: Int
+    var id: Int?
     @Published var name: String
     @Published var ingredients: [Ingredient]
     @Published var steps: [Step]
     
     static let sqlTable = Table("recipes")
-    static let sqlColumnId = Expression<Int>("id")
-    static let sqlColumnName = Expression<Int>("name")
+    static let sqlColumnId = Expression<Int?>("id")
+    static let sqlColumnName = Expression<String?>("name")
     
     init() {
-        print("Recipe init()")
-        self.id = Recipe.lastId
-        Recipe.lastId += 1
-        self.name = "Rezept \(id)"
+        self.name = "Rezept ..."
         self.ingredients = [Ingredient(),Ingredient()]
         self.steps = [Step(),Step()]
     }
     
     init(id: Int, name: String, ingredients: [Ingredient], steps: [Step]) {
-        print("Recipe init(id: Int, name: String, ingredients: [Ingredient], steps: [Step])")
         self.id = id
         self.name = name
         self.ingredients = ingredients
@@ -57,7 +52,9 @@ class Recipe : ObservableObject, Hashable {
     
     func add(after: Step) {
         if let idx = steps.firstIndex(of: after) {
-            steps.insert(Step(recipeId: id), at: idx+1)
+            if let id = id {
+                steps.insert(Step(recipeId: id), at: idx+1)
+            }
         }
     }
     
@@ -85,7 +82,9 @@ class Recipe : ObservableObject, Hashable {
     
     func add(after: Ingredient) {
         if let idx = ingredients.firstIndex(of: after) {
-            ingredients.insert(Ingredient(recipeId: id), at: idx+1)
+            if let id = id {
+                ingredients.insert(Ingredient(recipeId: id), at: idx+1)
+            }
         }
     }
     

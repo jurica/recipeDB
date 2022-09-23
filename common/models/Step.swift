@@ -13,7 +13,7 @@ class Step : Hashable, Identifiable {
         return lhs.id == rhs.id
     }
     
-    var id: Int
+    var id: Int?
     var recipeId: Int
     var description: String
     
@@ -23,13 +23,11 @@ class Step : Hashable, Identifiable {
     static let sqlColumnDescription = Expression<String>("description")
     
     init() {
-        self.id = Int.random(in: Int.min...0)
         self.recipeId = Int.random(in: Int.min...0)
         self.description = ""
     }
     
     init(recipeId: Int) {
-        self.id = Int.random(in: Int.min...0)
         self.recipeId = recipeId
         self.description = ""
     }

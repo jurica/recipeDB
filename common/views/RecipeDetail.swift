@@ -208,6 +208,7 @@ struct RecipeDetail: View {
                     }
                     .buttonStyle(MyButtonStyle())
                     Button(action: {
+                        recipeDBApp.getStore().save(recipe: recipe)
                         editing = false
                     }) {
                         Image(systemName: "checkmark")

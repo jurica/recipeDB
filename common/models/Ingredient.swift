@@ -13,7 +13,7 @@ class Ingredient : Hashable, Identifiable {
         return lhs.id == rhs.id
     }
     
-    var id: Int
+    var id: Int?
     var recipeId: Int
     var name: String
     var amount: String
@@ -27,7 +27,6 @@ class Ingredient : Hashable, Identifiable {
     static let sqlColumnUnit = Expression<String>("unit")
     
     init() {
-        self.id = Int.random(in: Int.min...0)
         self.recipeId = Int.random(in: 0...1000)
         self.name = "Mehl"
         self.amount = "500"
@@ -35,7 +34,6 @@ class Ingredient : Hashable, Identifiable {
     }
     
     init(recipeId: Int) {
-        self.id = Int.random(in: Int.min...0)
         self.recipeId = recipeId
         self.name = ""
         self.amount = ""
