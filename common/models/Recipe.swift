@@ -8,37 +8,49 @@
 import Foundation
 import SQLite
 
-class Recipe : ObservableObject, Hashable {
-    static func == (lhs: Recipe, rhs: Recipe) -> Bool {
-        return lhs.id == rhs.id
-    }
-    
-    var id: Int?
+class Recipe : ObservableObject, Hashable, Identifiable {
+    // MARK: member variables
+    let id: UUID = UUID()
+    var recordId: Int64? = nil
     @Published var name: String
     @Published var ingredients: [Ingredient]
     @Published var steps: [Step]
     
+    // MARK: sql model
     static let sqlTable = Table("recipes")
-    static let sqlColumnId = Expression<Int?>("id")
-    static let sqlColumnName = Expression<String?>("name")
+    static let sqlColumnId = Expression<Int64>("id")
+    static let sqlColumnCreatedAt = Expression<Date?>("created_at")
+    static let sqlColumnUpdatedAt = Expression<Date?>("updated_at")
+    static let sqlColumnDeletedAt = Expression<Date?>("deleted_at")
+    static let sqlColumnName = Expression<String>("name")
     
-    init() {
-        self.name = "Rezept ..."
-        self.ingredients = [Ingredient(),Ingredient()]
-        self.steps = [Step(),Step()]
-    }
-    
-    init(id: Int, name: String, ingredients: [Ingredient], steps: [Step]) {
-        self.id = id
-        self.name = name
-        self.ingredients = ingredients
-        self.steps = steps
+    // MARK: protocol implementations
+    static func == (lhs: Recipe, rhs: Recipe) -> Bool {
+        if (lhs.recordId != nil && rhs.recordId != nil) {
+            return lhs.recordId == rhs.recordId
+        }
+        return lhs.id == rhs.id
     }
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
     
+    // MARK: initializers
+    init() {
+        self.name = "Rezept ..."
+        self.ingredients = [Ingredient(),Ingredient()]
+        self.steps = [Step(),Step()]
+    }
+    
+    init(recipe: Row, ingredients: [Ingredient], steps: [Step]) {
+        self.recordId = recipe[Recipe.sqlColumnId]
+        self.name = recipe[Recipe.sqlColumnName]
+        self.ingredients = ingredients
+        self.steps = steps
+    }
+    
+    // MARK: functions
     func stepNumber(step: Step) -> Int {
         let idx = steps.firstIndex(of: step) ?? 0
         return idx + 1
@@ -52,9 +64,7 @@ class Recipe : ObservableObject, Hashable {
     
     func add(after: Step) {
         if let idx = steps.firstIndex(of: after) {
-            if let id = id {
-                steps.insert(Step(recipeId: id), at: idx+1)
-            }
+            steps.insert(Step(), at: idx+1)
         }
     }
     
@@ -82,9 +92,7 @@ class Recipe : ObservableObject, Hashable {
     
     func add(after: Ingredient) {
         if let idx = ingredients.firstIndex(of: after) {
-            if let id = id {
-                ingredients.insert(Ingredient(recipeId: id), at: idx+1)
-            }
+            ingredients.insert(Ingredient(), at: idx+1)
         }
     }
     

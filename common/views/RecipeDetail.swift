@@ -10,6 +10,8 @@ import SwiftUI
 struct RecipeDetail: View {
     @ObservedObject var recipe: Recipe
     @State var editing: Bool = false
+    @State private var searchText = ""
+    
     var body: some View {
         VStack {
             ScrollView {
@@ -208,7 +210,7 @@ struct RecipeDetail: View {
                     }
                     .buttonStyle(MyButtonStyle())
                     Button(action: {
-                        recipeDBApp.getStore().save(recipe: recipe)
+                        recipeDBApp.recipeList.save(recipe: recipe)
                         editing = false
                     }) {
                         Image(systemName: "checkmark")
@@ -219,7 +221,32 @@ struct RecipeDetail: View {
                 .padding()
             }
         }
+//        .navigationTitle("test")
+//        .navigationBarTitleDisplayMode(.inline)
+        .searchable(text: $searchText)
+        .toolbarRole(.editor)
+        .toolbar {
+            ToolbarItem(content: {
+                Button(action: {
+                    recipeDBApp.recipeList.refresh()
+                }) {
+                    Image(systemName: "arrow.triangle.2.circlepath")
+                        .imageScale(.large)
+                }
+                .buttonStyle(MyButtonStyle())
+            })
+            ToolbarItem(content: {
+                Button(action: {
+                    print("nop")
+                }) {
+                    Image(systemName: "square.and.pencil")
+                        .imageScale(.large)
+                }
+                .buttonStyle(MyButtonStyle())
+            })
+        }
     }
+    
 }
 
 struct RecipeDetail_Previews: PreviewProvider {

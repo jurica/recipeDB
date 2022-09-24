@@ -18,6 +18,7 @@ struct Store {
                 let documents = path.appendingPathComponent("Documents")
                 let dbFile = documents.appending(path: "recipeDB.db")
 //                print(FileManager.default.isUbiquitousItem(at: dbFile))
+                
                 db = try Connection(dbFile.absoluteString)
             }
         } catch {
@@ -30,14 +31,15 @@ struct Store {
             return [Recipe(),Recipe(),Recipe(),Recipe(),Recipe(),Recipe(),Recipe(),Recipe(),Recipe(),Recipe(),Recipe()];
         }
         
-        let id = Expression<Int>("id")
-        let name = Expression<String>("name")
-        
         var recipes: [Recipe] = []
         do {
-            let tblRecipes = Table("recipes")
-            for recipe in try db!.prepare(tblRecipes) {
-                recipes.append(Recipe(id: recipe[id], name: recipe[name], ingredients: getIngredients(recipeId: recipe[id]), steps: getSteps(recipeId: recipe[id])))
+            let qry = Recipe.sqlTable
+                .select(Recipe.sqlColumnId, Recipe.sqlColumnName)
+                .filter(Recipe.sqlColumnDeletedAt == nil)
+            for recipe in try db!.prepare(qry) {
+                recipes.append(Recipe(recipe: recipe,
+                                      ingredients: getIngredients(recipeId: recipe[Recipe.sqlColumnId]),
+                                      steps: getSteps(recipeId: recipe[Recipe.sqlColumnId])))
             }
         } catch {
             print(error)
@@ -46,7 +48,7 @@ struct Store {
         return recipes
     }
     
-    func getIngredients(recipeId: Int) -> [Ingredient] {
+    func getIngredients(recipeId: Int64) -> [Ingredient] {
         var ingredients: [Ingredient] = []
         
         if (db != nil) {
@@ -62,7 +64,7 @@ struct Store {
         return ingredients
     }
     
-    func getSteps(recipeId: Int) -> [Step] {
+    func getSteps(recipeId: Int64) -> [Step] {
         var steps: [Step] = []
         
         if (db != nil) {
@@ -80,15 +82,49 @@ struct Store {
     
     func save(recipe: Recipe) {
         if let db = db {
-//            try db.run(users.insert(or: .replace, email <- "alice@mac.com", name <- "Alice B."))
             do {
                 try db.transaction {
-                    try db.run(Recipe.sqlTable.insert(or: .replace,
-                                                      Recipe.sqlColumnId <- recipe.id,
-                                                      Recipe.sqlColumnName <- recipe.name))
+                    recipe.recordId = try db.run(Recipe.sqlTable.insert(or: .replace,
+                                                                        Recipe.sqlColumnId <- recipe.recordId!,
+                                                                        Recipe.sqlColumnName <- recipe.name))
+                    try saveIngredients(recipe: recipe)
+                    try saveSteps(recipe: recipe)
                 }
             } catch {
                 print(error)
+            }
+        }
+    }
+    
+    private func saveIngredients(recipe: Recipe) throws {
+        if let db = db {
+            try db.run(Ingredient.sqlTable
+                .filter(Ingredient.sqlColumnRecipeId == recipe.recordId!)
+                .delete())
+            for ingredient in recipe.ingredients {
+                try db.run(Ingredient.sqlTable
+                    .insert(
+                        Ingredient.sqlColumnName <- ingredient.name,
+                        Ingredient.sqlColumnRecipeId <- recipe.recordId!,
+                        Ingredient.sqlColumnAmount <- ingredient.amount,
+                        Ingredient.sqlColumnUnit <- ingredient.unit
+                    ))
+            }
+        }
+    }
+    
+    private func saveSteps(recipe: Recipe) throws {
+        if let db = db {
+            try db.run(Step.sqlTable
+                .filter(Step.sqlColumnRecipeId == recipe.recordId!)
+                .delete()
+            )
+            for step in recipe.steps {
+                try db.run(Step.sqlTable
+                    .insert(
+                        Step.sqlColumnRecipeId <- recipe.recordId!,
+                        Step.sqlColumnDescription <- step.description
+                    ))
             }
         }
     }

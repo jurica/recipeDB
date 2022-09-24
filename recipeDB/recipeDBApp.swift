@@ -9,15 +9,11 @@ import SwiftUI
 
 @main
 struct recipeDBApp: App {
-    static let store: Store = Store()
+    static let recipeList: RecipeList = RecipeList()
     
     var body: some Scene {
         WindowGroup {
-            ContentView(recipes: recipeDBApp.getStore().getRecipes())
+            ContentView()
         }
-    }
-    
-    static func getStore() -> Store {
-        return store
     }
 }
