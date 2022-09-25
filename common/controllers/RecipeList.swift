@@ -8,8 +8,8 @@
 import Foundation
 
 class RecipeList : ObservableObject {
-    var recipes: [Recipe]
-    
+    private var recipes: [Recipe]
+    private var searchFor: String = ""
     private let store: Store = Store()
     
     init() {
@@ -24,5 +24,18 @@ class RecipeList : ObservableObject {
     func save(recipe: Recipe) {
         store.save(recipe: recipe)
         refresh()
+    }
+    
+    func search(name: String) {
+        searchFor = name
+        objectWillChange.send()
+    }
+    
+    func getAll() -> [Recipe] {
+        if (searchFor.isEmpty) {
+            return recipes
+        } else {
+            return recipes.filter{$0.name.lowercased().contains(searchFor.lowercased())}
+        }
     }
 }

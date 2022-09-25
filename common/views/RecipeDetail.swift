@@ -9,8 +9,7 @@ import SwiftUI
 
 struct RecipeDetail: View {
     @ObservedObject var recipe: Recipe
-    @State var editing: Bool = false
-    @State private var searchText = ""
+    @State private var editing: Bool = false
     
     var body: some View {
         VStack {
@@ -221,10 +220,6 @@ struct RecipeDetail: View {
                 .padding()
             }
         }
-//        .navigationTitle("test")
-//        .navigationBarTitleDisplayMode(.inline)
-        .searchable(text: $searchText)
-        .toolbarRole(.editor)
         .toolbar {
             ToolbarItem(content: {
                 Button(action: {
@@ -246,7 +241,6 @@ struct RecipeDetail: View {
             })
         }
     }
-    
 }
 
 struct RecipeDetail_Previews: PreviewProvider {

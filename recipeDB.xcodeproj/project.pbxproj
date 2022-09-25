@@ -91,6 +91,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2613709928E062EC00255AFD /* controllers */ = {
+			isa = PBXGroup;
+			children = (
+				26A8BEFB28DF17F700E7CA64 /* RecipeList.swift */,
+			);
+			path = controllers;
+			sourceTree = "<group>";
+		};
 		26D5144228D4D7E8001F024B = {
 			isa = PBXGroup;
 			children = (
@@ -154,6 +162,7 @@
 		26D5147928D4D85C001F024B /* common */ = {
 			isa = PBXGroup;
 			children = (
+				2613709928E062EC00255AFD /* controllers */,
 				26D5147D28D50B54001F024B /* views */,
 				26D5147A28D4D877001F024B /* models */,
 			);
@@ -166,7 +175,6 @@
 				26D5147B28D4D88F001F024B /* Recipe.swift */,
 				260B36B528D5D9B5009D6040 /* Step.swift */,
 				260B36B728D5D9BD009D6040 /* Ingredient.swift */,
-				26A8BEFB28DF17F700E7CA64 /* RecipeList.swift */,
 			);
 			path = models;
 			sourceTree = "<group>";

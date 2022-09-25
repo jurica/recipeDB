@@ -15,6 +15,9 @@ class Recipe : ObservableObject, Hashable, Identifiable {
     @Published var name: String
     @Published var ingredients: [Ingredient]
     @Published var steps: [Step]
+    @Published var createdAt: Date?
+    @Published var updatedAt: Date?
+    @Published var deletedAt: Date?
     
     // MARK: sql model
     static let sqlTable = Table("recipes")
@@ -46,6 +49,9 @@ class Recipe : ObservableObject, Hashable, Identifiable {
     init(recipe: Row, ingredients: [Ingredient], steps: [Step]) {
         self.recordId = recipe[Recipe.sqlColumnId]
         self.name = recipe[Recipe.sqlColumnName]
+//        self.createdAt = recipe[Recipe.sqlColumnCreatedAt]
+//        self.updatedAt = recipe[Recipe.sqlColumnUpdatedAt]
+//        self.deletedAt = recipe[Recipe.sqlColumnDeletedAt]
         self.ingredients = ingredients
         self.steps = steps
     }

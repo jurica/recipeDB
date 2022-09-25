@@ -9,16 +9,21 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject private var recipeList: RecipeList = recipeDBApp.recipeList
+    @State private var searchText: String = ""
     
     var body: some View {
         NavigationSplitView {
-            List(recipeList.recipes) { recipe in
+            List(recipeList.getAll()) { recipe in
                 RecipeRow(recipe: recipe)
             }
         } detail: {
-            if let initialRecipe = recipeList.recipes.first {
+            if let initialRecipe = recipeList.getAll().first {
                 RecipeDetail(recipe: initialRecipe)
             }
+        }
+        .searchable(text: $searchText)
+        .onChange(of: searchText) { _ in
+            recipeList.search(name: searchText)
         }
     }
 }

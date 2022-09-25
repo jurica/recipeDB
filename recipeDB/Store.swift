@@ -36,6 +36,7 @@ struct Store {
             let qry = Recipe.sqlTable
                 .select(Recipe.sqlColumnId, Recipe.sqlColumnName)
                 .filter(Recipe.sqlColumnDeletedAt == nil)
+                .order(Recipe.sqlColumnName.asc)
             for recipe in try db!.prepare(qry) {
                 recipes.append(Recipe(recipe: recipe,
                                       ingredients: getIngredients(recipeId: recipe[Recipe.sqlColumnId]),
@@ -86,7 +87,9 @@ struct Store {
                 try db.transaction {
                     recipe.recordId = try db.run(Recipe.sqlTable.insert(or: .replace,
                                                                         Recipe.sqlColumnId <- recipe.recordId!,
-                                                                        Recipe.sqlColumnName <- recipe.name))
+                                                                        Recipe.sqlColumnName <- recipe.name,
+                                                                        Recipe.sqlColumnUpdatedAt <- Date()
+                                                                       ))
                     try saveIngredients(recipe: recipe)
                     try saveSteps(recipe: recipe)
                 }
