@@ -11,7 +11,7 @@ struct RecipeRow: View {
     var recipe: Recipe
     var body: some View {
         NavigationLink(recipe.name) {
-            RecipeDetail(recipe: recipe)
+            DetailView(recipe: recipe)
         }
     }
 }

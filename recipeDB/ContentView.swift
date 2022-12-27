@@ -11,6 +11,7 @@ struct ContentView: View {
     @ObservedObject private var recipeList: RecipeList = recipeDBApp.recipeList
     @State private var searchText: String = ""
     
+    
     var body: some View {
         NavigationSplitView {
             List(recipeList.getAll()) { recipe in
@@ -18,7 +19,9 @@ struct ContentView: View {
             }
         } detail: {
             if let initialRecipe = recipeList.getAll().first {
-                RecipeDetail(recipe: initialRecipe)
+                DetailView(recipe: initialRecipe)
+            } else {
+                DetailView(recipe: Recipe())
             }
         }
         .searchable(text: $searchText)

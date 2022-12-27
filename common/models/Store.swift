@@ -6,24 +6,64 @@
 //
 
 import SQLite
+import SQLite3
 import Foundation
 
 struct Store {
     var db: Connection? = nil
+    var fileDocument: RecipeDBFileDocument? = nil
     
     init() {
         do {
-//            print("ubiquityIdentityToken: %@", FileManager.default.ubiquityIdentityToken as Any)
-            if let path = FileManager.default.url(forUbiquityContainerIdentifier: "iCloud.de.bacurin.recipeDB") {
-                let documents = path.appendingPathComponent("Documents")
-                let dbFile = documents.appending(path: "recipeDB.db")
-//                print(FileManager.default.isUbiquitousItem(at: dbFile))
-                
-                db = try Connection(dbFile.absoluteString)
+            let url = Store.defaultStoreURL()
+            db = try Connection(url.absoluteString)
+            fileDocument = RecipeDBFileDocument(url: url)
+        } catch {
+            print("Failed to open database: \(error)")
+        }
+    }
+    
+    init(url: URL) {
+        do {
+            let dest = Store.defaultStoreURL()
+            if (url != dest) {
+                print("copy \(url) to \(dest), target exists: \(FileManager.default.fileExists(atPath: dest.absoluteString))")
+                if FileManager.default.fileExists(atPath: dest.path) {
+                    print("delete \(dest)")
+                    try FileManager.default.removeItem(at: dest)
+                }
+                if url.startAccessingSecurityScopedResource() {
+                    try FileManager.default.copyItem(at: url, to: dest)
+                    url.stopAccessingSecurityScopedResource()
+                } else {
+                    print("Unable to access given file!")
+                }
             }
         } catch {
-            print(error)
+            print("Failed copy given database: \(error)")
         }
+        
+        self.init()
+    }
+    
+    static func defaultStoreURL() -> URL {
+        if var url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+#if os(macOS)
+            url.append(component: "recipeDB")
+            if !FileManager.default.fileExists(atPath: url.path) {
+                do {
+                    try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false)
+                } catch {
+                    fatalError("Failed to create application directory: \(url)")
+                }
+            }
+#endif
+            url.append(path: "recipeDB.db")
+            
+            return url
+        }
+        
+        fatalError("Unable to determine application directory")
     }
     
     func getRecipes() -> [Recipe] {
@@ -129,6 +169,12 @@ struct Store {
                         Step.sqlColumnDescription <- step.description
                     ))
             }
+        }
+    }
+    
+    public func close() {
+        if let db = db {
+            sqlite3_close(db.handle)
         }
     }
 }

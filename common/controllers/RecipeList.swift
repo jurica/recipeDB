@@ -8,22 +8,32 @@
 import Foundation
 
 class RecipeList : ObservableObject {
-    private var recipes: [Recipe]
+    private var recipes: [Recipe] = []
     private var searchFor: String = ""
-    private let store: Store = Store()
+    private var store: Store? = Store()
     
     init() {
-        recipes = store.getRecipes()
+        if let store {
+            recipes = store.getRecipes()
+        }
+    }
+    
+    func test() -> RecipeDBFileDocument? {
+        return store?.fileDocument
     }
     
     func refresh() {
-        recipes = store.getRecipes()
-        objectWillChange.send()
+        if let store = store {
+            recipes = store.getRecipes()
+            objectWillChange.send()
+        }
     }
     
     func save(recipe: Recipe) {
-        store.save(recipe: recipe)
-        refresh()
+        if let store = store {
+            store.save(recipe: recipe)
+            refresh()
+        }
     }
     
     func search(name: String) {
@@ -37,5 +47,11 @@ class RecipeList : ObservableObject {
         } else {
             return recipes.filter{$0.name.lowercased().contains(searchFor.lowercased())}
         }
+    }
+    
+    func initStore(url: URL) {
+        store = nil
+        store = Store(url: url)
+        refresh()
     }
 }

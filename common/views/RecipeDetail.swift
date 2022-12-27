@@ -220,26 +220,6 @@ struct RecipeDetail: View {
                 .padding()
             }
         }
-        .toolbar {
-            ToolbarItem(content: {
-                Button(action: {
-                    recipeDBApp.recipeList.refresh()
-                }) {
-                    Image(systemName: "arrow.triangle.2.circlepath")
-                        .imageScale(.large)
-                }
-                .buttonStyle(MyButtonStyle())
-            })
-            ToolbarItem(content: {
-                Button(action: {
-                    print("nop")
-                }) {
-                    Image(systemName: "square.and.pencil")
-                        .imageScale(.large)
-                }
-                .buttonStyle(MyButtonStyle())
-            })
-        }
     }
 }
 
