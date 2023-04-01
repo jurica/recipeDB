@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"bacurin.de/recipeDB/backend/controllers"
 	"bacurin.de/recipeDB/backend/middlewares"
 	"bacurin.de/recipeDB/backend/models"
 	"golang.org/x/crypto/bcrypt"
@@ -38,6 +39,11 @@ func Start() {
 	_, err := models.Model.Initialize()
 	if err != nil {
 		log.Fatal("Error connecting to the database: ", err)
+	}
+
+	if len == 2 && os.Args[1] == "export" {
+		controllers.Recipe.ExportToMarkdown();
+		os.Exit(0)
 	}
 
 	route()

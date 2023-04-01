@@ -1,8 +1,11 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
+	"os"
 	"strconv"
+	"strings"
 
 	"bacurin.de/recipeDB/backend/dtos"
 	"bacurin.de/recipeDB/backend/models"
@@ -16,6 +19,7 @@ type recipeControllerInterface interface {
 	Create(*gin.Context)
 	Update(*gin.Context)
 	Delete(*gin.Context)
+	ExportToMarkdown()
 }
 
 type recipeControllerStruct struct{}
@@ -185,4 +189,60 @@ func (rc *recipeControllerStruct) Delete(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, recipe)
+}
+
+func (rc *recipeControllerStruct) ExportToMarkdown() {
+	data := dtos.RecipeList{}
+	var qryResult *gorm.DB
+	qryResult = models.Model.DB().Preload("Steps").Preload("Ingredients").Find(&data.Recipes)
+	if qryResult.Error == nil {
+		models.Model.DB().Model(&models.Recipe{}).Count(&data.RecipeCount)
+		println("found", data.RecipeCount, "recipes")
+
+		for _, recipe := range data.Recipes {
+			var markdownRecipe strings.Builder
+			markdownRecipe.WriteString("# ")
+			markdownRecipe.WriteString(recipe.Name)
+			markdownRecipe.WriteString("\n\n")
+
+			markdownRecipe.WriteString("## Zutaten\n")
+			markdownRecipe.WriteString("| Menge | Einheit | Zutat |\n")
+			markdownRecipe.WriteString("| ---: | ---: | --- |\n")
+			for _, ingredient := range recipe.Ingredients {
+				markdownRecipe.WriteString("| ")
+				markdownRecipe.WriteString(ingredient.Amount)
+				markdownRecipe.WriteString(" | ")
+				markdownRecipe.WriteString(ingredient.Unit)
+				markdownRecipe.WriteString(" | ")
+				markdownRecipe.WriteString(ingredient.Name)
+				markdownRecipe.WriteString(" |\n")
+			}
+			markdownRecipe.WriteString("\n")
+
+			markdownRecipe.WriteString("## Zubereitung\n")
+			for i, step := range recipe.Steps {
+				markdownRecipe.WriteString("### Schritt ")
+				markdownRecipe.WriteString(strconv.FormatInt(int64(i+1), 10))
+				markdownRecipe.WriteString("\n\n")
+				markdownRecipe.WriteString(step.Description)
+				markdownRecipe.WriteString("\n\n")
+			}
+
+			// println(markdownRecipe.String())
+
+			f, err := os.Create("md/"+recipe.Name+".md")
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			defer f.Close()
+
+			_, err2 := f.WriteString(markdownRecipe.String())
+			if err2 != nil {
+				log.Fatal(err2)
+			}
+
+			// return
+		}
+	}
 }

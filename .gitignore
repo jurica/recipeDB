@@ -6,6 +6,5 @@ backend/bin/arm7/recipeDB
 backend/bin/mac/recipeDB
 backend/data
 */bin/*
-backend/*.db
-backend/*.db_
 backend/backend
+backend/md
